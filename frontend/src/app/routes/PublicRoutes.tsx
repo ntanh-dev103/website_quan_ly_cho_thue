@@ -12,7 +12,10 @@ export function PublicRoutes() {
     <Routes>
       <Route element={<PublicLayout />}>
         <Route path="/" element={<HomePage />} />
-        <Route path="/auth" element={<AuthPage />} />
+        <Route path="/login" element={<AuthPage mode="login" />} />
+        <Route path="/register" element={<AuthPage mode="register" />} />
+        <Route path="/partner" element={<AuthPage mode="partner" />} />
+        <Route path="/auth" element={<AuthPage mode="login" />} />
         <Route path="/catalog" element={<CatalogPage />} />
         <Route path="/products/:id" element={<ProductDetailPage />} />
       </Route>

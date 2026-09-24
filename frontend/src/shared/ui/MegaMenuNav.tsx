@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronRight, Menu } from 'lucide-react';
+import { ChevronDown, ChevronRight, Menu, Package } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/shared/ui/sheet';
 import { categories } from '@/entities/product/product.mock';
 import { cn } from '@/shared/lib/utils';
+import { useAuthStore } from '@/entities/user/useAuthStore';
 
 export function MegaMenuNav() {
+  const { role } = useAuthStore();
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   return (
@@ -80,8 +82,8 @@ export function MegaMenuNav() {
           </div>
         </div>
 
-        <Link to="/about" className="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">
-          Về chúng tôi
+        <Link to="/catalog" className="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">
+          Tất cả thiết bị
         </Link>
       </div>
 
@@ -89,39 +91,65 @@ export function MegaMenuNav() {
       <div className="md:hidden">
         <Sheet>
           <SheetTrigger asChild>
-            <button className="p-2 -mr-2 text-gray-500 hover:bg-gray-100 rounded-lg">
+            <button className="p-2 -mr-2 text-gray-500 hover:bg-gray-100 rounded-lg cursor-pointer">
               <Menu className="h-5 w-5" />
             </button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-[300px] sm:w-[350px] p-0">
-            <SheetHeader className="p-6 border-b border-gray-100 text-left">
-              <SheetTitle>Menu</SheetTitle>
+          <SheetContent side="left" className="w-[300px] sm:w-[350px] p-0 flex flex-col h-full">
+            <SheetHeader className="p-5 border-b border-gray-100 text-left flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg gradient-primary text-white">
+                  <Package className="h-4 w-4" />
+                </div>
+                <SheetTitle className="text-base font-bold text-gray-900">RentalShop</SheetTitle>
+              </div>
             </SheetHeader>
-            <div className="p-4 space-y-4">
-              <Link to="/" className="block p-3 text-base font-medium text-gray-900 rounded-lg hover:bg-gray-50">
+            <div className="p-4 space-y-4 flex-1 overflow-y-auto">
+              <Link to="/" className="block px-3 py-2 text-base font-semibold text-gray-900 rounded-lg hover:bg-gray-50">
                 Trang chủ
               </Link>
+              <Link to="/catalog" className="block px-3 py-2 text-base font-semibold text-gray-900 rounded-lg hover:bg-gray-50">
+                Tất cả thiết bị
+              </Link>
+
+              {/* Role Quick Links for Mobile */}
+              {role === 'MERCHANT' && (
+                <div className="px-3 py-2 bg-purple-50 rounded-xl border border-purple-100">
+                  <span className="text-[11px] font-bold text-purple-600 uppercase block mb-1">Cửa hàng của bạn</span>
+                  <Link to="/merchant" className="text-sm font-semibold text-purple-900 hover:underline block">
+                    Bảng điều khiển đối tác →
+                  </Link>
+                </div>
+              )}
+              {role === 'ADMIN' && (
+                <div className="px-3 py-2 bg-red-50 rounded-xl border border-red-100">
+                  <span className="text-[11px] font-bold text-red-600 uppercase block mb-1">Hệ thống quản trị</span>
+                  <Link to="/admin" className="text-sm font-semibold text-red-900 hover:underline block">
+                    Vào trang Quản trị sàn →
+                  </Link>
+                </div>
+              )}
               
-              <div className="px-3">
-                <div className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                  Danh mục
+              <div className="px-3 pt-2">
+                <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                  Danh mục chính
                 </div>
                 <div className="space-y-1">
                   {categories.map((cat) => (
                     <div key={cat.id}>
                       <Link
                         to={`/catalog?category=${cat.slug}`}
-                        className="block py-2 text-base font-medium text-gray-900"
+                        className="block py-1.5 text-sm font-medium text-gray-800 hover:text-primary-600"
                       >
                         {cat.name}
                       </Link>
                       {cat.children && (
-                        <div className="ml-4 border-l border-gray-200 pl-4 space-y-2 mt-2 mb-4">
+                        <div className="ml-3 border-l-2 border-gray-100 pl-3 space-y-1.5 my-1.5">
                           {cat.children.map((sub) => (
                             <Link
                               key={sub.id}
                               to={`/catalog?category=${sub.slug}`}
-                              className="block text-sm text-gray-600 hover:text-primary-600"
+                              className="block text-xs text-gray-500 hover:text-primary-600"
                             >
                               {sub.name}
                             </Link>

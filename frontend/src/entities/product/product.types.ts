@@ -1,4 +1,4 @@
-import { type ItemStatus } from '@/entities/user/user.types';
+import { type ItemStatus, type MerchantTier } from '@/entities/user/user.types';
 
 export type EAVValueType = 'string' | 'number' | 'boolean' | 'options';
 
@@ -30,6 +30,7 @@ export interface MerchantInfo {
   avatar?: string;
   rating: number;
   totalReviews: number;
+  tier?: MerchantTier;
 }
 
 export interface Product {

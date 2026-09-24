@@ -48,15 +48,22 @@ export function CatalogPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <select
-              className="h-10 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-            >
-              <option value="newest">Mới nhất</option>
-              <option value="price_asc">Giá: Thấp đến Cao</option>
-              <option value="price_desc">Giá: Cao đến Thấp</option>
-            </select>
+            <div className="relative">
+              <select
+                className="h-10 appearance-none rounded-xl border border-[#D7E5F0] bg-white pl-3.5 pr-8 py-2 text-xs sm:text-sm font-semibold text-slate-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#06B6D4]/20 focus:border-[#06B6D4] cursor-pointer"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+              >
+                <option value="newest">Mới nhất trên sàn</option>
+                <option value="price_asc">Giá thuê: Thấp đến Cao</option>
+                <option value="price_desc">Giá thuê: Cao đến Thấp</option>
+              </select>
+              <div className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400">
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
 
             {/* Mobile Sheet Trigger */}
             <div className="md:hidden">
