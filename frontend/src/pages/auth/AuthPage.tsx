@@ -1,5 +1,8 @@
+/* Hallmark · component: AuthPage · genre: modern-minimal · theme: Indigo/Slate
+ * philosophy: Dual-split responsive layout, tactile card framing, seamless auth-mode tabs, zero-slop typography
+ */
 import { useLocation, Navigate, Link } from 'react-router-dom';
-import { Package, ArrowLeft } from 'lucide-react';
+import { Package, ArrowLeft, Building2, User, LogIn } from 'lucide-react';
 import { LoginForm } from '@/features/auth/LoginForm';
 import { CustomerRegisterForm } from '@/features/auth/CustomerRegisterForm';
 import { MerchantRegisterForm } from '@/features/auth/MerchantRegisterForm';
@@ -35,73 +38,111 @@ export function AuthPage({ mode }: AuthPageProps) {
   }
 
   return (
-    <div className="min-h-screen lg:h-screen w-full flex flex-col lg:flex-row bg-[#F7FBFF] text-[#0F172A] overflow-x-hidden relative">
-      {/* TOP HEADER: RentalShop Logo (Top-Left) */}
-      <div className="absolute top-6 left-8 xl:left-12 z-30 hidden lg:block">
-        <Link to="/" className="inline-flex items-center gap-3 group">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white border border-[#D7E5F0] transition-transform group-hover:scale-105 shadow-md shadow-[#06B6D4]/10">
-            <Package className="h-6 w-6 text-[#06B6D4]" />
+    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-slate-50 text-slate-900 overflow-x-clip relative">
+      {/* Top Header on Desktop: Logo and Back Button */}
+      <header className="absolute top-0 left-0 right-0 z-30 hidden lg:flex items-center justify-between px-8 xl:px-12 py-5 pointer-events-none">
+        <Link to="/" className="inline-flex items-center gap-3 group pointer-events-auto">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white shadow-sm transition-transform group-hover:scale-105">
+            <Package className="h-5 w-5 text-indigo-400" />
           </div>
-          <span className="text-2xl font-black tracking-tight text-[#0F172A]">RentalShop</span>
+          <div className="flex flex-col">
+            <span className="text-xl font-black tracking-tight text-white">RentHub</span>
+            <span className="text-[10px] text-slate-400 font-medium tracking-wide uppercase">Rental Platform</span>
+          </div>
         </Link>
-      </div>
 
-      {/* TOP RIGHT: "← Về trang chủ" White Translucent Glass Button */}
-      <div className="absolute top-6 right-8 xl:right-12 z-30 hidden lg:block">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-xs font-bold text-[#0F172A] hover:text-[#2563EB] bg-white/90 hover:bg-white px-4 py-2.5 rounded-xl backdrop-blur-md transition-all border border-[#D7E5F0] shadow-sm hover:shadow"
+          className="inline-flex items-center gap-2 text-xs font-semibold text-slate-700 hover:text-indigo-600 bg-white/90 hover:bg-white px-3.5 py-2 rounded-lg transition-all border border-slate-200 shadow-sm pointer-events-auto"
         >
-          <ArrowLeft className="h-4 w-4 text-[#06B6D4]" />
+          <ArrowLeft className="h-4 w-4" />
           <span>Về trang chủ</span>
         </Link>
-      </div>
+      </header>
 
-      {/* LEFT 55%: Visual Marketing & 3D Rental Ecosystem */}
-      <div className="hidden lg:flex lg:w-[55%] relative overflow-hidden h-full border-r border-[#D7E5F0] bg-[#EEF8FF]">
-        <div className="w-full h-full pt-16">
+      {/* LEFT 50%: Visual Ecosystem Showcase */}
+      <div className="hidden lg:flex lg:w-1/2 xl:w-[52%] relative overflow-hidden h-screen border-r border-slate-800 bg-slate-900">
+        <div className="w-full h-full pt-20">
           <AuthProductShowcase />
         </div>
       </div>
 
-      {/* RIGHT 45%: Login Experience */}
-      <div className="flex-1 lg:w-[45%] flex flex-col justify-between p-6 sm:p-8 lg:p-10 xl:p-14 h-full overflow-y-auto bg-[#F8FAFC]">
+      {/* RIGHT 50%: Auth Form Container */}
+      <div className="flex-1 lg:w-1/2 xl:w-[48%] flex flex-col justify-between p-5 sm:p-8 lg:p-12 xl:p-16 min-h-screen lg:h-screen lg:overflow-y-auto bg-slate-50">
         {/* Mobile top bar */}
-        <div className="flex items-center justify-between mb-6 lg:hidden">
-          <Link to="/" className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white border border-[#D7E5F0] text-[#06B6D4] shadow-sm">
-              <Package className="h-5 w-5" />
+        <div className="flex items-center justify-between pb-4 border-b border-slate-200 lg:hidden">
+          <Link to="/" className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-sm">
+              <Package className="h-4 w-4" />
             </div>
-            <span className="text-xl font-black text-[#0F172A]">RentalShop</span>
+            <span className="text-lg font-black text-slate-900">RentHub</span>
           </Link>
 
           <Link
             to="/"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#64748B] hover:text-[#0F172A] transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
-            <span>Về trang chủ</span>
+            <span>Trang chủ</span>
           </Link>
         </div>
 
-        {/* Main Glass Card Form Container (Begins ~70-90px from top) */}
-        <div className="w-full max-w-md mx-auto my-auto pt-6 lg:pt-8 pb-4">
-          <div className="rounded-[24px] bg-white/85 backdrop-blur-xl border border-[#D7E5F0] p-7 sm:p-9 shadow-[0_20px_50px_rgba(15,23,42,0.08)]">
+        {/* Form Container */}
+        <div className="w-full max-w-lg mx-auto my-auto py-6 sm:py-8">
+          {/* Mode Switcher Tabs */}
+          <div className="grid grid-cols-3 p-1 mb-6 rounded-xl bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-600">
+            <Link
+              to="/login"
+              className={`flex items-center justify-center gap-1.5 py-2 rounded-lg transition-all ${
+                currentMode === 'login'
+                  ? 'bg-white text-indigo-700 shadow-sm font-bold'
+                  : 'hover:text-slate-900'
+              }`}
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              <span>Đăng nhập</span>
+            </Link>
+            <Link
+              to="/register"
+              className={`flex items-center justify-center gap-1.5 py-2 rounded-lg transition-all ${
+                currentMode === 'register'
+                  ? 'bg-white text-indigo-700 shadow-sm font-bold'
+                  : 'hover:text-slate-900'
+              }`}
+            >
+              <User className="w-3.5 h-3.5" />
+              <span>Đăng ký thuê</span>
+            </Link>
+            <Link
+              to="/partner"
+              className={`flex items-center justify-center gap-1.5 py-2 rounded-lg transition-all ${
+                currentMode === 'partner'
+                  ? 'bg-white text-indigo-700 shadow-sm font-bold'
+                  : 'hover:text-slate-900'
+              }`}
+            >
+              <Building2 className="w-3.5 h-3.5" />
+              <span>Đối tác shop</span>
+            </Link>
+          </div>
+
+          {/* Form Card */}
+          <div className="rounded-2xl bg-white border border-slate-200 p-6 sm:p-8 shadow-sm">
             {currentMode === 'login' && <LoginForm />}
             {currentMode === 'register' && <CustomerRegisterForm />}
             {currentMode === 'partner' && <MerchantRegisterForm />}
           </div>
 
-          {/* Bottom Security Assurance */}
-          <div className="text-center text-[11px] text-[#64748B] mt-5">
-            Bằng việc tiếp tục, bạn đồng ý với Điều khoản dịch vụ và Chính sách bảo mật của RentalShop.
-          </div>
+          {/* Legal / Privacy note */}
+          <p className="text-center text-[11px] text-slate-500 mt-4 leading-relaxed">
+            Bằng việc tiếp tục, bạn đồng ý với <a href="#" className="underline hover:text-slate-800">Điều khoản sử dụng</a> và <a href="#" className="underline hover:text-slate-800">Chính sách bảo mật thông tin</a> của RentHub.
+          </p>
         </div>
 
-        {/* Subtle Footer */}
-        <div className="text-center text-[11px] text-[#94A3B8] py-2">
-          &copy; {new Date().getFullYear()} RentalShop Technology Platform. All rights reserved.
-        </div>
+        {/* Bottom copyright */}
+        <footer className="text-center text-xs text-slate-400 py-2 border-t border-slate-200/60 mt-4">
+          &copy; {new Date().getFullYear()} RentHub Technology Platform. Nền tảng cho thuê tài sản thông minh.
+        </footer>
       </div>
     </div>
   );

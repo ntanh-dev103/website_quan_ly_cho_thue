@@ -1,6 +1,18 @@
 import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, ArrowRight, Sparkles, Plus } from 'lucide-react';
+import { 
+  ChevronLeft, 
+  ChevronRight, 
+  ArrowRight, 
+  Plus, 
+  Tent, 
+  Sparkles, 
+  Video, 
+  Flame, 
+  Car, 
+  Laptop,
+  type LucideIcon
+} from 'lucide-react';
 import { Button } from '@/shared/ui/button';
 import { useGhostCartStore } from '@/entities/cart/useGhostCartStore';
 import { mockProducts } from '@/entities/product/product.mock';
@@ -8,7 +20,7 @@ import { mockProducts } from '@/entities/product/product.mock';
 export interface CuratedKit {
   id: string;
   name: string;
-  emoji: string;
+  icon: LucideIcon;
   priceText: string;
   itemCount: number;
   image: string;
@@ -21,7 +33,7 @@ export const CURATED_KITS: CuratedKit[] = [
   {
     id: 'kit-camping',
     name: 'Kit Cắm trại Cuối tuần',
-    emoji: '🏕️',
+    icon: Tent,
     priceText: 'Từ 500.000đ/ngày',
     itemCount: 5,
     tag: 'Dã ngoại',
@@ -32,7 +44,7 @@ export const CURATED_KITS: CuratedKit[] = [
   {
     id: 'kit-launch-event',
     name: 'Kit Sự kiện Ra mắt & Gala',
-    emoji: '👗',
+    icon: Sparkles,
     priceText: 'Từ 1.200.000đ/ngày',
     itemCount: 4,
     tag: 'Sự kiện thảm đỏ',
@@ -43,7 +55,7 @@ export const CURATED_KITS: CuratedKit[] = [
   {
     id: 'kit-cinematic',
     name: 'Kit Quay Phim MV / Vlog Pro',
-    emoji: '🎥',
+    icon: Video,
     priceText: 'Từ 1.650.000đ/ngày',
     itemCount: 6,
     tag: 'Sản xuất hình ảnh',
@@ -54,7 +66,7 @@ export const CURATED_KITS: CuratedKit[] = [
   {
     id: 'kit-date-night',
     name: 'Kit Date Night Sang Trọng',
-    emoji: '✨',
+    icon: Flame,
     priceText: 'Từ 750.000đ/ngày',
     itemCount: 3,
     tag: 'Hẹn hò lãng mạn',
@@ -65,7 +77,7 @@ export const CURATED_KITS: CuratedKit[] = [
   {
     id: 'kit-roadtrip',
     name: 'Kit Roadtrip Phượt Xuyên Việt',
-    emoji: '🚗',
+    icon: Car,
     priceText: 'Từ 1.450.000đ/ngày',
     itemCount: 4,
     tag: 'Du lịch vi vu',
@@ -76,7 +88,7 @@ export const CURATED_KITS: CuratedKit[] = [
   {
     id: 'kit-studio-creator',
     name: 'Kit Creator Di Động 4K',
-    emoji: '💻',
+    icon: Laptop,
     priceText: 'Từ 1.800.000đ/ngày',
     itemCount: 5,
     tag: 'Workstation',
@@ -99,7 +111,6 @@ export function CuratedKitsSection() {
   };
 
   const handleAddKitToCart = (kit: CuratedKit) => {
-    // Find representative product in mock
     const product = mockProducts.find((p) => p.id === kit.sampleProductId) || mockProducts[0];
     addItem(product, 2);
     setIsOpen(true);
@@ -107,18 +118,14 @@ export function CuratedKitsSection() {
 
   return (
     <section id="curated-kits-section" className="py-10 sm:py-14 max-w-7xl mx-auto px-4 sm:px-6 relative group/section">
-      {/* Section Header */}
+      {/* Section Header (Clean stack, no decorative clutter) */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 sm:mb-8 gap-3">
         <div>
-          <div className="flex items-center gap-2 text-primary-600 text-xs font-bold uppercase tracking-wider mb-1">
-            <Sparkles className="h-4 w-4" />
-            <span>Lifestyle Bundling</span>
-          </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
-            Thuê theo Phong cách
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-950 tracking-tight">
+            Gói thuê theo Phong cách
           </h2>
           <p className="text-sm text-gray-500 mt-1">
-            Gói đồ trọn gói cho mọi dịp — tiết kiệm thời gian chuẩn bị và tối ưu chi phí
+            Gói trọn bộ tiện lợi cho sự kiện, du lịch và làm việc — tiết kiệm thời gian và chi phí thuê lẻ
           </p>
         </div>
 
@@ -161,66 +168,71 @@ export function CuratedKitsSection() {
         className="flex gap-4 sm:gap-6 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-none scroll-smooth -mx-4 px-4 sm:mx-0 sm:px-0"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
-        {CURATED_KITS.map((kit) => (
-          <div
-            key={kit.id}
-            className="min-w-[280px] sm:min-w-[300px] h-[340px] rounded-xl shadow-md relative overflow-hidden shrink-0 snap-start group/card cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
-          >
-            {/* Background Lifestyle Image */}
-            <img
-              src={kit.image}
-              alt={kit.name}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110"
-              loading="lazy"
-            />
+        {CURATED_KITS.map((kit) => {
+          const KitIcon = kit.icon;
+          return (
+            <div
+              key={kit.id}
+              className="min-w-[280px] sm:min-w-[310px] h-[350px] rounded-2xl shadow-sm border border-gray-200/80 relative overflow-hidden shrink-0 snap-start group/card cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+            >
+              {/* Background Lifestyle Image */}
+              <img
+                src={kit.image}
+                alt={kit.name}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-105"
+                loading="lazy"
+              />
 
-            {/* Top Tag & Item Count Badge */}
-            <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between z-10">
-              <span className="bg-black/50 backdrop-blur-md text-white text-[11px] font-semibold px-2.5 py-1 rounded-full border border-white/20">
-                {kit.tag}
-              </span>
-              <span className="bg-white/25 backdrop-blur-md text-white font-bold rounded-full px-2.5 py-1 text-xs border border-white/30">
-                {kit.itemCount} sản phẩm
-              </span>
-            </div>
-
-            {/* Gradient Overlay for bottom text readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-gray-950/90 via-gray-900/40 to-transparent" />
-
-            {/* Bottom Content */}
-            <div className="absolute bottom-0 inset-x-0 p-4 text-white z-10 flex flex-col justify-end">
-              <div className="flex items-center gap-2 mb-1.5">
-                <span className="text-2xl">{kit.emoji}</span>
-                <span className="font-bold text-lg leading-snug drop-shadow-sm text-white">
-                  {kit.name}
+              {/* Top Tag & Item Count Badge */}
+              <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between z-10">
+                <span className="bg-gray-950/70 backdrop-blur-md text-white text-[11px] font-semibold px-2.5 py-1 rounded-full border border-white/20">
+                  {kit.tag}
+                </span>
+                <span className="bg-white/90 backdrop-blur-md text-gray-900 font-bold rounded-full px-2.5 py-1 text-[11px] border border-gray-200 shadow-2xs">
+                  {kit.itemCount} sản phẩm
                 </span>
               </div>
 
-              <p className="text-xs text-white/80 line-clamp-2 mb-3 leading-relaxed">
-                {kit.description}
-              </p>
+              {/* Gradient Overlay for bottom text readability */}
+              <div className="absolute inset-0 bg-gradient-to-t from-gray-950/95 via-gray-950/40 to-transparent" />
 
-              <div className="flex items-center justify-between pt-2 border-t border-white/15">
-                <span className="text-xs sm:text-sm font-extrabold text-amber-300">
-                  {kit.priceText}
-                </span>
+              {/* Bottom Content */}
+              <div className="absolute bottom-0 inset-x-0 p-4 sm:p-5 text-white z-10 flex flex-col justify-end">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/20 backdrop-blur-md text-white shrink-0">
+                    <KitIcon className="h-4 w-4" />
+                  </div>
+                  <span className="font-bold text-base sm:text-lg leading-snug drop-shadow-sm text-white">
+                    {kit.name}
+                  </span>
+                </div>
 
-                {/* Hover overlay button: Xem chi tiết / Thuê ngay */}
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleAddKitToCart(kit);
-                  }}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white hover:bg-gray-100 text-primary-700 text-xs font-bold shadow-md transition-all active:scale-95 cursor-pointer"
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                  <span>Thuê combo</span>
-                </button>
+                <p className="text-xs text-white/80 line-clamp-2 mb-3 leading-relaxed">
+                  {kit.description}
+                </p>
+
+                <div className="flex items-center justify-between pt-2.5 border-t border-white/15">
+                  <span className="text-xs sm:text-sm font-extrabold text-amber-300 tabular-nums">
+                    {kit.priceText}
+                  </span>
+
+                  {/* Add kit button */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleAddKitToCart(kit);
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white hover:bg-gray-100 text-gray-900 text-xs font-bold shadow-sm transition-all active:scale-95 cursor-pointer"
+                  >
+                    <Plus className="h-3.5 w-3.5 text-primary-600" />
+                    <span>Thuê combo</span>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );

@@ -166,13 +166,13 @@ export function RentalCalculator({ product }: RentalCalculatorProps) {
               <div className="pt-4 border-t border-gray-100 space-y-3">
                 <div className="flex justify-between text-sm text-gray-600">
                   <span>Giá thuê ({days} ngày)</span>
-                  <span className="font-medium text-gray-900">{formatCurrency(rentalTotal)}</span>
+                  <span className="font-medium text-gray-900 tabular-nums">{formatCurrency(rentalTotal)}</span>
                 </div>
                 
                 {deliveryFee !== null && (
                   <div className="flex justify-between text-sm text-gray-600">
                     <span>Phí giao hàng</span>
-                    <span className="font-medium text-gray-900">{formatCurrency(deliveryFee)}</span>
+                    <span className="font-medium text-gray-900 tabular-nums">{formatCurrency(deliveryFee)}</span>
                   </div>
                 )}
 
@@ -190,14 +190,14 @@ export function RentalCalculator({ product }: RentalCalculatorProps) {
                       </Link>
                     )}
                   </div>
-                  <span className="font-medium text-gray-900">{formatCurrency(calculatedDeposit)}</span>
+                  <span className="font-medium text-gray-900 tabular-nums">{formatCurrency(calculatedDeposit)}</span>
                 </div>
               </div>
 
               <div className="pt-4 border-t border-gray-200">
                 <div className="flex justify-between items-center mb-6">
                   <span className="text-base font-bold text-gray-900">Tổng thanh toán</span>
-                  <span className="text-2xl font-extrabold text-primary-600">{formatCurrency(finalTotal)}</span>
+                  <span className="text-2xl font-extrabold text-primary-600 tabular-nums">{formatCurrency(finalTotal)}</span>
                 </div>
                 <Button
                   size="xl"

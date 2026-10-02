@@ -1,196 +1,198 @@
 import { Link } from 'react-router-dom';
-import { Compass, Facebook, Youtube, Instagram, Mail, Phone } from 'lucide-react';
+import { 
+  Compass, 
+  ShieldCheck, 
+  Phone, 
+  Mail, 
+  ArrowUpRight, 
+  Lock, 
+  Sparkles 
+} from 'lucide-react';
 
 export function Footer() {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="bg-gray-900 text-gray-300 border-t border-gray-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 lg:py-16">
+    <footer className="border-t border-gray-200/90 bg-white text-gray-600">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-12">
         
-        {/* 4-column grid desktop, stacked mobile */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-12">
-          
-          {/* Col 1: RentHub Logo (White) + Short description + Social Icons */}
-          <div className="space-y-4">
-            <Link to="/" className="inline-flex items-center gap-2 group">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-600 text-white shadow-md shadow-primary-500/20">
-                <Compass className="h-5 w-5" />
-              </div>
-              <span className="text-xl font-extrabold tracking-tight text-white">
-                RentHub
+        {/* TOP: Statement & Closing Vision (Ft5 Statement influence) */}
+        <div className="pb-10 sm:pb-12 border-b border-gray-100 flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary-50 text-primary-700 text-xs font-semibold mb-3">
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>Kinh tế tuần hoàn thông minh</span>
+            </div>
+            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black text-gray-950 tracking-tight leading-tight">
+              Tối ưu chi phí sở hữu.
+              <span className="block text-primary-600 font-extrabold mt-0.5">
+                Chia sẻ tài sản, đảm bảo hợp đồng.
               </span>
+            </h3>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              to="/partner"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gray-900 hover:bg-gray-800 text-white text-xs font-bold transition-all shadow-2xs hover:scale-[1.01]"
+            >
+              <span>Mở gian hàng cho thuê</span>
+              <ArrowUpRight className="h-3.5 w-3.5" />
             </Link>
 
-            <p className="text-xs text-gray-400 leading-relaxed max-w-sm">
-              Nền tảng kinh tế tuần hoàn cho thuê hàng đầu Việt Nam. Kết nối khách thuê thông thái với hệ thống đối tác xác minh uy tín. Tiết kiệm tài chính, bảo vệ môi trường.
-            </p>
-
-            <div className="flex items-center gap-3 pt-2">
-              <a 
-                href="https://facebook.com" 
-                target="_blank" 
-                rel="noreferrer" 
-                aria-label="Facebook"
-                className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
-              >
-                <Facebook className="h-4 w-4" />
-              </a>
-              <a 
-                href="https://youtube.com" 
-                target="_blank" 
-                rel="noreferrer" 
-                aria-label="YouTube"
-                className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
-              >
-                <Youtube className="h-4 w-4" />
-              </a>
-              <a 
-                href="https://instagram.com" 
-                target="_blank" 
-                rel="noreferrer" 
-                aria-label="Instagram"
-                className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700 transition-colors"
-              >
-                <Instagram className="h-4 w-4" />
-              </a>
-            </div>
-          </div>
-
-          {/* Col 2: "Danh mục" links */}
-          <div className="space-y-3">
-            <h4 className="text-sm font-bold uppercase tracking-wider text-white">
-              Danh mục
-            </h4>
-            <ul className="space-y-2 text-xs text-gray-400">
-              <li>
-                <Link to="/catalog?category=phuong-tien" className="hover:text-primary-400 transition-colors">
-                  Phương tiện di chuyển (Ô tô, Xe máy)
-                </Link>
-              </li>
-              <li>
-                <Link to="/catalog?category=cong-nghe" className="hover:text-primary-400 transition-colors">
-                  Thiết bị công nghệ & Máy ảnh
-                </Link>
-              </li>
-              <li>
-                <Link to="/catalog?category=thoi-trang" className="hover:text-primary-400 transition-colors">
-                  Thời trang dạ tiệc & Áo dài sự kiện
-                </Link>
-              </li>
-              <li>
-                <Link to="/catalog?category=da-ngoai" className="hover:text-primary-400 transition-colors">
-                  Dụng cụ dã ngoại & Camping Glamping
-                </Link>
-              </li>
-              <li>
-                <Link to="/catalog" className="hover:text-primary-400 transition-colors">
-                  Gói phong cách Lifestyle Bundles
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Col 3: "Đối tác" links (Đăng ký, Quyền lợi, Hoa hồng) */}
-          <div className="space-y-3">
-            <h4 className="text-sm font-bold uppercase tracking-wider text-white">
-              Đối tác
-            </h4>
-            <ul className="space-y-2 text-xs text-gray-400">
-              <li>
-                <Link to="/partner" className="hover:text-primary-400 transition-colors font-medium text-emerald-400">
-                  Đăng ký gian hàng đối tác &rarr;
-                </Link>
-              </li>
-              <li>
-                <Link to="/partner#benefits" className="hover:text-primary-400 transition-colors">
-                  Quyền lợi nhà cung cấp M1 - M4
-                </Link>
-              </li>
-              <li>
-                <Link to="/partner#commission" className="hover:text-primary-400 transition-colors">
-                  Chính sách phí sàn & Hoa hồng ưu đãi (từ 2%)
-                </Link>
-              </li>
-              <li>
-                <Link to="/partner#insurance" className="hover:text-primary-400 transition-colors">
-                  Quy trình ký quỹ & Bảo hiểm thiết bị
-                </Link>
-              </li>
-              <li>
-                <Link to="/partner#b2b" className="hover:text-primary-400 transition-colors">
-                  Giải pháp cho thuê Doanh nghiệp (B2B)
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Col 4: "Hỗ trợ" links (Liên hệ, Điều khoản, Bảo hiểm) */}
-          <div className="space-y-3">
-            <h4 className="text-sm font-bold uppercase tracking-wider text-white">
-              Hỗ trợ
-            </h4>
-            <ul className="space-y-2 text-xs text-gray-400">
-              <li>
-                <span className="flex items-center gap-1.5 text-gray-300">
-                  <Phone className="h-3.5 w-3.5 text-primary-400" />
-                  <span>Tổng đài: <strong>1900 6868</strong> (24/7)</span>
-                </span>
-              </li>
-              <li>
-                <span className="flex items-center gap-1.5 text-gray-300">
-                  <Mail className="h-3.5 w-3.5 text-primary-400" />
-                  <span>Email: support@renthub.vn</span>
-                </span>
-              </li>
-              <li>
-                <Link to="/catalog" className="hover:text-primary-400 transition-colors">
-                  Điều khoản dịch vụ & Hợp đồng điện tử
-                </Link>
-              </li>
-              <li>
-                <Link to="/catalog" className="hover:text-primary-400 transition-colors">
-                  Chính sách bảo hiểm & Đền bù thất thoát
-                </Link>
-              </li>
-              <li>
-                <Link to="/catalog" className="hover:text-primary-400 transition-colors">
-                  Câu hỏi thường gặp (FAQ)
-                </Link>
-              </li>
-            </ul>
+            <Link
+              to="/catalog"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-800 text-xs font-semibold transition-all"
+            >
+              <span>Duyệt thiết bị có sẵn</span>
+            </Link>
           </div>
         </div>
 
-        {/* Bottom Bar: Border top gray-800. "© 2024 RentHub. All rights reserved." + Payment Method Icons */}
-        <div className="pt-8 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500">
-          <p>© 2024 RentHub. All rights reserved. Nền tảng Kinh tế Tuần hoàn.</p>
+        {/* MIDDLE: 3 Refined Columns (Brand / Navigation / Merchant & Trust) */}
+        <div className="py-10 sm:py-12 grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 border-b border-gray-100">
+          
+          {/* Col 1: Brand & Operational Trust (5 cols) */}
+          <div className="md:col-span-5 space-y-4">
+            <Link to="/" className="inline-flex items-center gap-2.5 group">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-600 text-white shadow-sm shadow-primary-500/20 group-hover:scale-105 transition-transform">
+                <Compass className="h-5 w-5" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xl font-extrabold tracking-tight text-gray-950 leading-none">
+                  RentHub
+                </span>
+                <span className="text-[10px] font-semibold text-gray-400 tracking-wider uppercase mt-0.5">
+                  Rental Marketplace
+                </span>
+              </div>
+            </Link>
 
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] text-gray-400 mr-2">Phương thức thanh toán:</span>
-            
-            {/* MoMo Badge */}
-            <div className="px-2.5 py-1 rounded-md bg-pink-950/60 border border-pink-700/50 text-pink-300 font-extrabold text-[10px] tracking-tight">
-              MoMo
-            </div>
+            <p className="text-xs text-gray-500 leading-relaxed max-w-sm">
+              Nền tảng kết nối người có nhu cầu thuê thiết bị chuyên nghiệp với hệ thống đối tác xác minh danh tính. Áp dụng cơ chế xếp hạng tín nhiệm đa tầng để miễn giảm tiền cọc.
+            </p>
 
-            {/* VNPay Badge */}
-            <div className="px-2.5 py-1 rounded-md bg-blue-950/60 border border-blue-700/50 text-blue-300 font-extrabold text-[10px] tracking-tight">
-              VNPay QR
-            </div>
-
-            {/* Visa Badge */}
-            <div className="px-2.5 py-1 rounded-md bg-gray-800 border border-gray-700 text-amber-300 font-black text-[10px] tracking-wider italic">
-              VISA
-            </div>
-
-            {/* MasterCard Badge */}
-            <div className="px-2.5 py-1 rounded-md bg-gray-800 border border-gray-700 text-orange-400 font-bold text-[10px]">
-              MasterCard
+            <div className="pt-2 flex flex-wrap gap-2 text-xs">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200/60 text-emerald-800 text-[11px] font-medium">
+                <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+                Xác thực CCCD & GPKD
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-primary-50 border border-primary-200/60 text-primary-800 text-[11px] font-medium">
+                <Lock className="h-3.5 w-3.5 text-primary-600" />
+                Bảo hiểm tài sản 100%
+              </span>
             </div>
           </div>
+
+          {/* Col 2: Danh mục cho thuê (3 cols) */}
+          <div className="md:col-span-3 space-y-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-gray-950">
+              Danh mục thiết bị
+            </h4>
+            <ul className="space-y-2.5 text-xs text-gray-500">
+              <li>
+                <Link to="/catalog?category=may-anh" className="hover:text-primary-600 transition-colors">
+                  Máy ảnh & Flycam 4K
+                </Link>
+              </li>
+              <li>
+                <Link to="/catalog?category=o-to" className="hover:text-primary-600 transition-colors">
+                  Ô tô điện & Xe tự lái
+                </Link>
+              </li>
+              <li>
+                <Link to="/catalog?category=laptop" className="hover:text-primary-600 transition-colors">
+                  Laptop Workstation & PC
+                </Link>
+              </li>
+              <li>
+                <Link to="/catalog?category=da-ngoai" className="hover:text-primary-600 transition-colors">
+                  Lều cắm trại & Dã ngoại Glamping
+                </Link>
+              </li>
+              <li>
+                <Link to="/catalog?category=thoi-trang" className="hover:text-primary-600 transition-colors">
+                  Trang phục dạ tiệc & Thảm đỏ
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Col 3: Đối tác & Pháp lý (4 cols) */}
+          <div className="md:col-span-4 space-y-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-gray-950">
+              Đối tác & Quy chế sàn
+            </h4>
+            <ul className="space-y-2.5 text-xs text-gray-500">
+              <li>
+                <Link to="/partner" className="hover:text-primary-600 transition-colors font-medium text-primary-600 inline-flex items-center gap-1">
+                  <span>Chính sách đối tác M1–M4 (Hoa hồng từ 2%)</span>
+                  <ArrowUpRight className="h-3 w-3" />
+                </Link>
+              </li>
+              <li>
+                <Link to="/catalog" className="hover:text-primary-600 transition-colors">
+                  Cơ chế miễn cọc theo Customer Tier (C1–C4)
+                </Link>
+              </li>
+              <li>
+                <Link to="/catalog" className="hover:text-primary-600 transition-colors">
+                  Quy trình lập biên bản sự cố hư hại thiết bị
+                </Link>
+              </li>
+              <li>
+                <Link to="/catalog" className="hover:text-primary-600 transition-colors">
+                  Điều khoản sử dụng & Hợp đồng điện tử
+                </Link>
+              </li>
+              <li>
+                <Link to="/catalog" className="hover:text-primary-600 transition-colors">
+                  Chính sách bảo mật thông tin định danh
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+
+        {/* BOTTOM: Contact info, Copyright & Payment Methods */}
+        <div className="pt-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 text-xs text-gray-500">
+          
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+            <span>© {currentYear} RentHub Marketplace. Bản quyền thuộc về Đồ Án Tốt Nghiệp.</span>
+            <div className="flex items-center gap-4 text-gray-600">
+              <span className="inline-flex items-center gap-1.5">
+                <Phone className="h-3.5 w-3.5 text-primary-600" />
+                <span className="font-semibold text-gray-900">1900 6868</span>
+                <span className="text-gray-400">(24/7)</span>
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <Mail className="h-3.5 w-3.5 text-primary-600" />
+                <span>support@renthub.vn</span>
+              </span>
+            </div>
+          </div>
+
+          {/* Payment Partners (Clean minimal badges) */}
+          <div className="flex items-center gap-2 self-start md:self-auto">
+            <span className="text-[11px] text-gray-400 mr-1">Thanh toán an toàn:</span>
+            <span className="px-2 py-0.5 rounded border border-gray-200 bg-gray-50 text-[10px] font-semibold text-gray-700">
+              MoMo
+            </span>
+            <span className="px-2 py-0.5 rounded border border-gray-200 bg-gray-50 text-[10px] font-semibold text-gray-700">
+              VNPay QR
+            </span>
+            <span className="px-2 py-0.5 rounded border border-gray-200 bg-gray-50 text-[10px] font-semibold text-gray-700">
+              Visa / Master
+            </span>
+            <span className="px-2 py-0.5 rounded border border-gray-200 bg-gray-50 text-[10px] font-semibold text-gray-700">
+              Chuyển khoản
+            </span>
+          </div>
+
         </div>
 
       </div>
     </footer>
   );
 }
-

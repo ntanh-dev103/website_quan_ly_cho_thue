@@ -96,7 +96,7 @@ export function ProductCard({ product, fixedWidth = false }: ProductCardProps) {
         {/* Card Footer: p-4 pt-0 mt-auto */}
         <div className="p-3.5 sm:p-4 pt-0 mt-auto border-t border-gray-100/80 flex items-center justify-between gap-2">
           <div>
-            <span className="font-extrabold text-base sm:text-lg text-primary-600 tracking-tight leading-none block">
+            <span className="font-extrabold text-base sm:text-lg text-primary-600 tracking-tight leading-none block tabular-nums">
               {formatCurrency(product.pricePerDay)}
             </span>
             <span className="text-[10px] text-gray-400 block -mt-0.5">/ ngày</span>

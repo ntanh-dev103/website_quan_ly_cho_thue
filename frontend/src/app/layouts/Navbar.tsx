@@ -2,15 +2,15 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Search, 
-  Bell, 
   ShoppingBag, 
   Menu, 
   X, 
   Tag, 
   LogOut, 
-  ChevronRight,
-  ShieldCheck,
-  Compass
+  ChevronRight, 
+  ChevronDown, 
+  ShieldCheck, 
+  Compass 
 } from 'lucide-react';
 import { Button } from '@/shared/ui/button';
 import { TierBadge } from '@/shared/ui/TierBadge';
@@ -19,6 +19,10 @@ import { useAuthStore } from '@/entities/user/useAuthStore';
 import { useGhostCartStore } from '@/entities/cart/useGhostCartStore';
 import { SpotlightCmdBar } from '@/features/search/SpotlightCmdBar';
 import { GhostCartDrawer } from '@/features/cart/GhostCartDrawer';
+import { MegaMenuNav } from '@/shared/ui/MegaMenuNav';
+import { PromotionsPopover } from '@/features/promotions/PromotionsPopover';
+import { NotificationPopover } from '@/features/notifications/NotificationPopover';
+import { categories } from '@/entities/product/product.mock';
 import { toast } from 'sonner';
 
 export function Navbar() {
@@ -31,6 +35,7 @@ export function Navbar() {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isCmdOpen, setIsCmdOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [expandedMobileCat, setExpandedMobileCat] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
 
   // Close mobile menu on route change
@@ -78,7 +83,7 @@ export function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex h-16 items-center justify-between gap-4">
             
-            {/* LEFT: RentHub Logo (Bold text, primary color) */}
+            {/* LEFT: RentHub Logo (Bold text, primary color) + MegaMenuNav */}
             <div className="flex items-center gap-3 shrink-0">
               <Link to="/" className="flex items-center gap-2 group">
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-600 text-white shadow-md shadow-primary-500/20 group-hover:scale-105 transition-transform">
@@ -93,6 +98,9 @@ export function Navbar() {
                   </span>
                 </div>
               </Link>
+
+              {/* 2-Level Category MegaMenu */}
+              <MegaMenuNav />
             </div>
 
             {/* CENTER: Visual Search Bar (Desktop) */}
@@ -113,15 +121,11 @@ export function Navbar() {
             </div>
 
             {/* RIGHT: Actions (Khuyến mãi, Bell, Cart, User / Login) */}
-            <div className="flex items-center gap-2 sm:gap-3">
-              {/* Promotion link (Hidden on mobile) */}
-              <Link 
-                to="/catalog?promotions=true" 
-                className="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-600 hover:text-primary-600 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <Tag className="h-3.5 w-3.5 text-accent-500" />
-                <span>Khuyến mãi</span>
-              </Link>
+            <div className="flex items-center gap-1.5 sm:gap-2.5">
+              {/* 1. Promotions Popover (Deals & Vouchers) */}
+              <div className="hidden lg:block">
+                <PromotionsPopover />
+              </div>
 
               {/* Mobile Search Icon Button */}
               <button
@@ -133,23 +137,14 @@ export function Navbar() {
                 <Search className="h-5 w-5" />
               </button>
 
-              {/* Bell Icon (Notifications with subtle red dot) */}
-              <button 
-                type="button"
-                onClick={() => toast.info('Thông báo', { description: 'Bạn chưa có thông báo mới nào.' })}
-                className="relative p-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors"
-                aria-label="Thông báo"
-                title="Thông báo"
-              >
-                <Bell className="h-5 w-5" />
-                <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-destructive-500 ring-2 ring-white" />
-              </button>
+              {/* 2. Notification Center Popover */}
+              <NotificationPopover />
 
-              {/* Cart Icon Button (Ghost Cart) */}
+              {/* 3. Ghost Cart Drawer Button */}
               <button
                 type="button"
                 onClick={() => setCartOpen(true)}
-                className="relative p-2 rounded-lg text-gray-600 hover:text-primary-600 hover:bg-primary-50/60 transition-colors"
+                className="relative p-2 rounded-xl text-gray-600 hover:text-primary-600 hover:bg-primary-50/60 transition-colors cursor-pointer"
                 aria-label="Giỏ đồ thuê"
                 title="Giỏ đồ thuê"
               >
@@ -165,9 +160,9 @@ export function Navbar() {
               {isAuthenticated && user ? (
                 <div className="flex items-center gap-2 pl-1">
                   <div 
-                    onClick={() => navigate(role === 'MERCHANT' ? '/merchant' : role === 'ADMIN' ? '/admin' : '/catalog')}
+                    onClick={() => navigate('/account')}
                     className="flex items-center gap-2 cursor-pointer p-1 rounded-full hover:bg-gray-100 transition-colors"
-                    title={`Tài khoản: ${user.name}`}
+                    title={`Trung tâm điều khiển: ${user.name}`}
                   >
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-primary-700 font-bold text-xs ring-2 ring-primary-500/20">
                       {user.avatar ? (
@@ -298,11 +293,65 @@ export function Navbar() {
               </Link>
             </div>
 
+            {/* Mobile 2-Level Category Accordion */}
+            <div className="space-y-2 pt-2 border-t border-gray-100">
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider px-2 block mb-1">
+                Danh mục thiết bị (Cấp 1 & Cấp 2)
+              </span>
+              <div className="space-y-1">
+                {categories.map((cat) => {
+                  const isExpanded = expandedMobileCat === cat.id;
+                  return (
+                    <div key={cat.id} className="rounded-xl border border-gray-100 overflow-hidden bg-gray-50/50">
+                      <div className="flex items-center justify-between p-2.5">
+                        <Link
+                          to={`/catalog?category=${cat.slug}`}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="text-xs font-bold text-gray-800 hover:text-primary-600 flex-1 truncate"
+                        >
+                          {cat.name}
+                        </Link>
+                        {cat.children && cat.children.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => setExpandedMobileCat(isExpanded ? null : cat.id)}
+                            className="p-1 text-gray-400 hover:text-gray-700 rounded-md"
+                          >
+                            <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
+                          </button>
+                        )}
+                      </div>
+                      {isExpanded && cat.children && (
+                        <div className="p-2 pt-0 pl-4 space-y-1 bg-white border-t border-gray-100">
+                          {cat.children.map((sub) => (
+                            <Link
+                              key={sub.id}
+                              to={`/catalog?category=${sub.slug}`}
+                              onClick={() => setIsMobileMenuOpen(false)}
+                              className="block py-1.5 px-2 rounded-lg text-xs font-medium text-gray-600 hover:text-primary-600 hover:bg-primary-50"
+                            >
+                              • {sub.name}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* User State */}
             <div className="pt-4 border-t border-gray-100">
               {isAuthenticated && user ? (
                 <div className="space-y-3">
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
+                  <div 
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      navigate('/account');
+                    }}
+                    className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors"
+                  >
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary-600 font-bold">
                       {user.name?.charAt(0) || 'U'}
                     </div>

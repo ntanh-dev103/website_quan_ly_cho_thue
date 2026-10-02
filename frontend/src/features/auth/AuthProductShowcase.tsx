@@ -1,126 +1,181 @@
+/* Hallmark · component: AuthProductShowcase · genre: modern-minimal · theme: Indigo/Slate
+ * philosophy: Honest rental marketplace ecosystem, tactile card framing, zero AI-slop blur gradients
+ */
 import { useState } from 'react';
-import { Car, Sparkles, Camera } from 'lucide-react';
+import { 
+  Car, 
+  Camera, 
+  Shirt, 
+  ShieldCheck, 
+  FileCheck, 
+  Sparkles, 
+  Clock,
+  CheckCircle2
+} from 'lucide-react';
 
-interface EcosystemCategory {
+interface EcosystemFeature {
   id: string;
   name: string;
-  subtext: string;
-  icon: any;
-  accentColor: string;
-  badgeBorder: string;
-  badgeGlow: string;
+  tag: string;
+  icon: typeof Car;
+  items: string[];
 }
 
-const CATEGORIES: EcosystemCategory[] = [
+const CATEGORIES: EcosystemFeature[] = [
   {
     id: 'vehicles',
-    name: 'Phương tiện',
-    subtext: 'Ô tô • Xe máy • Xe điện',
+    name: 'Phương tiện di chuyển',
+    tag: 'Tự lái & Xe điện',
     icon: Car,
-    accentColor: 'text-[#2563EB]',
-    badgeBorder: 'border-[#2563EB]/25',
-    badgeGlow: 'shadow-[0_8px_20px_rgba(37,99,235,0.12)]',
-  },
-  {
-    id: 'fashion',
-    name: 'Thời trang & Sự kiện',
-    subtext: 'Trang phục • Đạo cụ • Sự kiện',
-    icon: Sparkles,
-    accentColor: 'text-[#8B5CF6]',
-    badgeBorder: 'border-[#8B5CF6]/25',
-    badgeGlow: 'shadow-[0_8px_20px_rgba(139,92,246,0.12)]',
+    items: ['Ô tô du lịch 4-7 chỗ', 'Xe máy tay ga cao cấp', 'Xe máy điện VinFast'],
   },
   {
     id: 'tech',
-    name: 'Thiết bị công nghệ',
-    subtext: 'Camera • Laptop • Máy chiếu',
+    name: 'Thiết bị & Công nghệ',
+    tag: 'Sản xuất & Văn phòng',
     icon: Camera,
-    accentColor: 'text-[#06B6D4]',
-    badgeBorder: 'border-[#06B6D4]/25',
-    badgeGlow: 'shadow-[0_8px_20px_rgba(6,182,212,0.14)]',
+    items: ['Máy ảnh & Ống kính Sony/Canon', 'Laptop đồ họa & Gaming', 'Máy chiếu & Đèn studio'],
+  },
+  {
+    id: 'events',
+    name: 'Sự kiện & Thời trang',
+    tag: 'Tiệc cưới & Hội nghị',
+    icon: Shirt,
+    items: ['Vest & Váy dạ hội thiết kế', 'Âm thanh ánh sáng sân khấu', 'Đạo cụ quay phim chụp ảnh'],
   },
 ];
 
 export function AuthProductShowcase() {
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string>('vehicles');
+
+  const selected = CATEGORIES.find(c => c.id === activeCategory) || CATEGORIES[0];
 
   return (
-    <div className="relative w-full h-full flex flex-col justify-between p-6 xl:p-12 select-none bg-[#EEF8FF] text-[#0F172A] overflow-hidden">
-      {/* Soft atmospheric blue & cyan ambient glows */}
-      <div className="absolute top-12 left-1/4 w-[500px] h-[500px] bg-[#E0F2FE]/80 rounded-full blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-[450px] h-[450px] bg-cyan-100/60 rounded-full blur-[110px] pointer-events-none" />
-      
-      {/* TOP: Hero Typography Area */}
-      <div className="relative z-10 space-y-3 pt-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/90 border border-[#D7E5F0] text-[#06B6D4] text-[11px] font-bold tracking-wider uppercase backdrop-blur-md shadow-sm">
-          <span className="w-2 h-2 rounded-full bg-[#06B6D4] animate-pulse" />
-          <span>MỘT NỀN TẢNG — MỌI NHU CẦU THUÊ</span>
+    <div className="relative w-full h-full flex flex-col justify-between p-8 xl:p-12 select-none bg-slate-900 text-white overflow-hidden">
+      {/* Subtle geometric grid background */}
+      <div 
+        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style={{
+          backgroundImage: `linear-gradient(#fff 1px, transparent 1px), linear-gradient(to right, #fff 1px, transparent 1px)`,
+          backgroundSize: '32px 32px'
+        }}
+      />
+
+      {/* TOP: Brand Value Proposition */}
+      <div className="relative z-10 space-y-3">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-400/20 text-indigo-300 text-xs font-semibold tracking-wide">
+          <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+          <span>HỆ SINH THÁI CHO THUÊ TOÀN DIỆN RENTHUB</span>
         </div>
 
-        <h1 className="text-3xl xl:text-5xl font-extrabold tracking-tight text-[#0F172A] leading-tight">
-          Thuê mọi thứ <br />
-          <span className="bg-gradient-to-r from-[#06B6D4] via-[#0284C7] to-[#2563EB] bg-clip-text text-transparent">
-            bạn cần
-          </span>
+        <h1 className="text-3xl xl:text-4xl font-bold tracking-tight text-white leading-tight">
+          Giải pháp tối ưu tài sản, <br />
+          <span className="text-indigo-400 font-extrabold">thuê linh hoạt theo nhu cầu</span>
         </h1>
 
-        <p className="text-xs xl:text-sm text-[#64748B] max-w-lg leading-relaxed font-normal">
-          Một nền tảng cho thuê phương tiện, thời trang, sự kiện và thiết bị công nghệ.
-        </p>
-
-        <p className="text-xs font-semibold text-[#0F172A] tracking-wide flex items-center gap-2 pt-1">
-          <span>Nhanh chóng</span>
-          <span className="text-[#06B6D4] font-bold">•</span>
-          <span>An toàn</span>
-          <span className="text-[#06B6D4] font-bold">•</span>
-          <span>Linh hoạt</span>
+        <p className="text-sm text-slate-300 max-w-lg leading-relaxed">
+          Nền tảng kết nối trực tiếp chủ sở hữu tài sản và người thuê với quy trình kiểm định minh bạch, hợp đồng điện tử bảo chứng và chính sách cọc giảm dần theo hạng thành viên.
         </p>
       </div>
 
-      {/* CENTER: Main 3D Rental Ecosystem (Direct Scene, NO nested UI frame) */}
-      <div className="relative z-10 my-auto py-2 flex items-center justify-center">
-        <div className="relative w-full max-w-2xl">
-          {/* Main 3D Scene Image directly on background */}
-          <div className="relative aspect-[16/10] w-full overflow-hidden rounded-3xl transition-transform duration-700 hover:scale-[1.01]">
+      {/* CENTER: Clean Scene Card & Interactive Category Preview */}
+      <div className="relative z-10 my-auto py-4 space-y-4">
+        {/* Showcase Visual Card */}
+        <div className="relative rounded-2xl overflow-hidden border border-slate-700/80 bg-slate-800/60 shadow-2xl">
+          <div className="aspect-[16/9] w-full overflow-hidden relative">
             <img
               src="/images/rentalshop_v2_light_3d.jpg"
-              alt="RentalShop V2 — Light 3D Rental Ecosystem"
-              className="w-full h-full object-cover object-left-top rounded-3xl shadow-[0_20px_60px_rgba(15,23,42,0.06)]"
+              alt="Hệ sinh thái cho thuê RentHub"
+              className="w-full h-full object-cover object-center transition-transform duration-500 hover:scale-[1.02]"
+              onError={(e) => {
+                // Graceful fallback if image fails
+                (e.currentTarget as HTMLElement).style.display = 'none';
+              }}
             />
+            {/* Overlay Gradient for text readability */}
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
+            
+            {/* Live active category caption on image */}
+            <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-xs text-white">
+              <span className="font-semibold text-slate-200 flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                Kiểm định kỹ thuật 100% trước khi bàn giao
+              </span>
+              <span className="text-[11px] bg-slate-900/80 px-2.5 py-1 rounded-md border border-slate-700 text-slate-300">
+                Sẵn sàng giao nhận
+              </span>
+            </div>
           </div>
+        </div>
 
-          {/* Floating Category Glass Badges overlayed directly */}
-          <div className="mt-4 grid grid-cols-3 gap-3">
-            {CATEGORIES.map((cat) => {
-              const Icon = cat.icon;
-              const isActive = activeCategory === cat.id;
-              return (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onMouseEnter={() => setActiveCategory(cat.id)}
-                  onMouseLeave={() => setActiveCategory(null)}
-                  className={`flex items-center gap-2.5 p-2.5 rounded-2xl text-left transition-all duration-300 cursor-pointer bg-white/80 backdrop-blur-md border ${
-                    isActive ? `${cat.badgeBorder} ${cat.badgeGlow} scale-[1.02] bg-white` : 'border-[#D7E5F0] hover:border-[#06B6D4]/40 shadow-sm'
-                  }`}
-                >
-                  <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white shadow-sm border border-[#D7E5F0]/80 ${cat.accentColor}`}>
-                    <Icon className="h-4 w-4" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <span className="text-xs font-bold text-[#0F172A] block truncate">{cat.name}</span>
-                    <span className="text-[10px] text-[#64748B] block truncate">{cat.subtext}</span>
-                  </div>
-                </button>
-              );
-            })}
+        {/* Category Pill Switcher */}
+        <div className="grid grid-cols-3 gap-2.5">
+          {CATEGORIES.map((cat) => {
+            const Icon = cat.icon;
+            const isSelected = activeCategory === cat.id;
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => setActiveCategory(cat.id)}
+                className={`flex flex-col items-start p-3 rounded-xl text-left transition-all duration-200 cursor-pointer border ${
+                  isSelected
+                    ? 'bg-indigo-600/20 border-indigo-500 text-white ring-1 ring-indigo-500/50'
+                    : 'bg-slate-800/60 border-slate-700/60 hover:bg-slate-800 text-slate-300 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <Icon className={`w-4 h-4 ${isSelected ? 'text-indigo-400' : 'text-slate-400'}`} />
+                  <span className="text-xs font-bold truncate">{cat.name}</span>
+                </div>
+                <span className="text-[10px] text-slate-400 truncate w-full">
+                  {cat.tag}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Active Category Asset Highlights */}
+        <div className="p-3 rounded-xl bg-slate-800/40 border border-slate-700/60 flex items-center justify-between text-xs text-slate-300">
+          <div className="flex items-center gap-2">
+            <span className="text-indigo-400 font-bold">Nổi bật:</span>
+            <span className="truncate">{selected.items.join(' • ')}</span>
           </div>
         </div>
       </div>
 
-      {/* BOTTOM FOOTNOTE */}
-      <div className="relative z-10 pt-2 text-[11px] text-[#64748B]">
-        <span>Hệ sinh thái cho thuê kết nối hơn 10,000+ thiết bị & phương tiện đã kiểm định.</span>
+      {/* BOTTOM: Three Core Pillars (Honest copy) */}
+      <div className="relative z-10 pt-4 border-t border-slate-800 grid grid-cols-3 gap-3 text-left">
+        <div className="space-y-1">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-200">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Giảm tới 25% cọc</span>
+          </div>
+          <p className="text-[11px] text-slate-400 leading-normal">
+            Áp dụng qua hệ thống điểm tín nhiệm thành viên.
+          </p>
+        </div>
+
+        <div className="space-y-1">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-200">
+            <FileCheck className="w-3.5 h-3.5 text-indigo-400" />
+            <span>Hợp đồng số hóa</span>
+          </div>
+          <p className="text-[11px] text-slate-400 leading-normal">
+            Ký duyệt trực tuyến, xác nhận tình trạng bằng ảnh chụp.
+          </p>
+        </div>
+
+        <div className="space-y-1">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-200">
+            <Clock className="w-3.5 h-3.5 text-amber-400" />
+            <span>Thuê theo giờ / ngày</span>
+          </div>
+          <p className="text-[11px] text-slate-400 leading-normal">
+            Thời hạn thuê linh hoạt, hỗ trợ gia hạn nhanh chóng.
+          </p>
+        </div>
       </div>
     </div>
   );

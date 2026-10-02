@@ -6,16 +6,16 @@ import {
   ChevronRight, 
   SlidersHorizontal, 
   ShoppingBag, 
-  Sparkles, 
-  Flame, 
   PackageOpen 
 } from 'lucide-react';
 import { Button } from '@/shared/ui/button';
 import { ProductCard } from '@/shared/ui/ProductCard';
 import { EmptyState } from '@/shared/ui/EmptyState';
 import { HeroSection } from '@/features/home/HeroSection';
-import { CuratedKitsSection } from '@/features/home/CuratedKitsSection';
+import { QuickSearchFilterBar } from '@/features/home/QuickSearchFilterBar';
 import { CategoryQuickLinks } from '@/features/home/CategoryQuickLinks';
+import { TierBenefitSection } from '@/features/home/TierBenefitSection';
+import { CuratedKitsSection } from '@/features/home/CuratedKitsSection';
 import { mockProducts } from '@/entities/product/product.mock';
 import { useGhostCartStore } from '@/entities/cart/useGhostCartStore';
 
@@ -36,10 +36,10 @@ export function HomePage() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Section 4: 6 Featured Products
+  // 6 Featured Products
   const featuredProducts = mockProducts.filter((p) => p.featured).slice(0, 6);
 
-  // Section 5: 8 Newest Products with Interactive Sorting
+  // 8 Newest Products with Interactive Sorting
   const sortedNewestProducts = [...mockProducts].sort((a, b) => {
     if (sortFilter === 'popular') {
       return (b.merchant.totalReviews || 0) - (a.merchant.totalReviews || 0);
@@ -61,21 +61,25 @@ export function HomePage() {
   return (
     <div className="animate-fade-in pb-16 bg-[#F9FAFB] min-h-screen">
       
-      {/* SECTION 2: HERO SECTION */}
+      {/* 1. HERO SECTION */}
       <HeroSection />
 
-      {/* SECTION 3: CURATED KITS (Lifestyle Bundling) */}
-      <CuratedKitsSection />
+      {/* 2. QUICK SEARCH & MULTI-CRITERIA FILTER BAR */}
+      <QuickSearchFilterBar />
 
-      {/* SECTION 4: SẢN PHẨM NỔI BẬT (Horizontal Scroll Row, 6 items) */}
+      {/* 3. CATEGORY QUICK-LINKS (Promoted directly after search) */}
+      <CategoryQuickLinks />
+
+      {/* 4. TIER BENEFIT SECTION (USP Đồ Án: Cơ chế miễn cọc đa tầng) */}
+      <div className="bg-white border-y border-gray-200/80">
+        <TierBenefitSection />
+      </div>
+
+      {/* 5. SẢN PHẨM NỔI BẬT (Horizontal Scroll Row, 6 items) */}
       <section className="py-10 sm:py-14 max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 sm:mb-8 gap-3">
           <div>
-            <div className="flex items-center gap-1.5 text-accent-600 text-xs font-bold uppercase tracking-wider mb-1">
-              <Flame className="h-4 w-4" />
-              <span>Được thuê nhiều nhất</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-950 tracking-tight">
               Sản phẩm nổi bật
             </h2>
             <p className="text-sm text-gray-500 mt-1">
@@ -149,84 +153,79 @@ export function HomePage() {
         )}
       </section>
 
-      {/* SECTION 5: MỚI NHẤT TRÊN SÀN (Responsive Grid, 8 items) */}
+      {/* 6. CURATED KITS (Lifestyle Bundling) */}
+      <div className="bg-white border-y border-gray-200/80">
+        <CuratedKitsSection />
+      </div>
+
+      {/* 7. MỚI NHẤT TRÊN SÀN (Clean Canvas Grid, 8 items) */}
       <section className="py-10 sm:py-14 max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-gray-200/80 shadow-xs">
-          
-          {/* Header + Filter Dropdown */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 gap-4 border-b border-gray-100 pb-5">
-            <div>
-              <div className="flex items-center gap-1.5 text-primary-600 text-xs font-bold uppercase tracking-wider mb-1">
-                <Sparkles className="h-4 w-4" />
-                <span>Cập nhật liên tục</span>
-              </div>
-              <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-gray-900 tracking-tight">
-                Mới nhất trên sàn
-              </h2>
-              <p className="text-xs sm:text-sm text-gray-500 mt-1">
-                Đồ dùng và phương tiện vừa được các đối tác đăng kiểm duyệt trên sàn RentHub
-              </p>
-            </div>
-
-            {/* Filter Dropdown */}
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 bg-gray-50 border border-gray-200/90 rounded-xl px-3 py-1.5 text-xs text-gray-700 shadow-2xs">
-                <SlidersHorizontal className="h-3.5 w-3.5 text-gray-500" />
-                <span className="font-medium text-gray-500 hidden sm:inline">Sắp xếp:</span>
-                <select
-                  value={sortFilter}
-                  onChange={(e) => setSortFilter(e.target.value as SortFilter)}
-                  className="bg-transparent font-bold text-gray-800 focus:outline-none cursor-pointer"
-                >
-                  <option value="newest">Mới nhất</option>
-                  <option value="popular">Phổ biến</option>
-                  <option value="price_asc">Giá tăng dần</option>
-                </select>
-              </div>
-
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => navigate('/catalog')} 
-                className="text-primary-600 hover:text-primary-700 hover:bg-primary-50 px-2 sm:px-3 text-xs sm:text-sm font-bold group"
-              >
-                <span>Xem tất cả</span>
-                <ArrowRight className="ml-1.5 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Button>
-            </div>
+        
+        {/* Header + Filter Dropdown */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-6 sm:mb-8 gap-4 border-b border-gray-200/80 pb-5">
+          <div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-950 tracking-tight">
+              Mới nhất trên sàn
+            </h2>
+            <p className="text-xs sm:text-sm text-gray-500 mt-1">
+              Đồ dùng và phương tiện vừa được các đối tác đăng kiểm duyệt trên sàn RentHub
+            </p>
           </div>
 
-          {/* Grid: Desktop 4 columns, Tablet 2 columns, Mobile 2 columns (0.5rem gap) */}
-          {isLoading ? (
-            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-6">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="space-y-3 bg-gray-50/70 p-3 rounded-xl border border-gray-100 animate-pulse">
-                  <div className="aspect-[4/3] bg-gray-200 rounded-lg" />
-                  <div className="h-4 bg-gray-200 rounded w-2/3" />
-                  <div className="h-3.5 bg-gray-200 rounded w-full" />
-                  <div className="h-4 bg-gray-200 rounded w-1/2 pt-2" />
-                </div>
-              ))}
+          {/* Filter Dropdown */}
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-700 shadow-2xs">
+              <SlidersHorizontal className="h-3.5 w-3.5 text-gray-500" />
+              <span className="font-medium text-gray-500 hidden sm:inline">Sắp xếp:</span>
+              <select
+                value={sortFilter}
+                onChange={(e) => setSortFilter(e.target.value as SortFilter)}
+                className="bg-transparent font-bold text-gray-800 focus:outline-none cursor-pointer"
+              >
+                <option value="newest">Mới nhất</option>
+                <option value="popular">Phổ biến</option>
+                <option value="price_asc">Giá tăng dần</option>
+              </select>
             </div>
-          ) : sortedNewestProducts.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-6">
-              {sortedNewestProducts.map((product) => (
-                <ProductCard key={product.id} product={product} fixedWidth={false} />
-              ))}
-            </div>
-          ) : (
-            <EmptyState 
-              icon={<PackageOpen className="h-10 w-10 text-gray-400" />}
-              title="Chưa có sản phẩm" 
-              description="Hiện chưa có sản phẩm mới nào theo bộ lọc này." 
-            />
-          )}
 
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => navigate('/catalog')} 
+              className="text-primary-600 hover:text-primary-700 hover:bg-primary-50 px-2 sm:px-3 text-xs sm:text-sm font-bold group"
+            >
+              <span>Xem tất cả</span>
+              <ArrowRight className="ml-1.5 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Button>
+          </div>
         </div>
-      </section>
 
-      {/* SECTION 6: CATEGORY QUICK-LINKS */}
-      <CategoryQuickLinks />
+        {/* Grid: Desktop 4 columns, Tablet 2 columns, Mobile 2 columns */}
+        {isLoading ? (
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="space-y-3 bg-white p-3 rounded-xl border border-gray-100 animate-pulse">
+                <div className="aspect-[4/3] bg-gray-200 rounded-lg" />
+                <div className="h-4 bg-gray-200 rounded w-2/3" />
+                <div className="h-3.5 bg-gray-200 rounded w-full" />
+                <div className="h-4 bg-gray-200 rounded w-1/2 pt-2" />
+              </div>
+            ))}
+          </div>
+        ) : sortedNewestProducts.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+            {sortedNewestProducts.map((product) => (
+              <ProductCard key={product.id} product={product} fixedWidth={false} />
+            ))}
+          </div>
+        ) : (
+          <EmptyState 
+            icon={<PackageOpen className="h-10 w-10 text-gray-400" />}
+            title="Chưa có sản phẩm" 
+            description="Hiện chưa có sản phẩm mới nào theo bộ lọc này." 
+          />
+        )}
+      </section>
 
       {/* FLOATING CART ICON (Mobile & Desktop quick access) */}
       <div className="fixed bottom-6 right-6 z-40">
@@ -249,4 +248,3 @@ export function HomePage() {
     </div>
   );
 }
-

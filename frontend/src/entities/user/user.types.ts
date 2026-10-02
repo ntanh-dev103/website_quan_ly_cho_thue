@@ -51,6 +51,18 @@ export const COMMISSION_RATES: Record<MerchantTier, number> = {
   M4: 0.02,
 };
 
+// ===== Tier Code Names (Gamification & Badges) =====
+export const TIER_CODE_NAMES: Record<CustomerTier | MerchantTier, string> = {
+  C1: 'C1 Newbie',
+  C2: 'C2 Verified',
+  C3: 'C3 VIP',
+  C4: 'C4 Enterprise',
+  M1: 'M1 Starter',
+  M2: 'M2 Pro',
+  M3: 'M3 Master',
+  M4: 'M4 Enterprise',
+};
+
 // ===== User Type =====
 export interface User {
   id: string;
@@ -58,8 +70,13 @@ export interface User {
   name: string;
   phone?: string;
   avatar?: string;
+  address?: string;
   companyName?: string;
   taxCode?: string;
+  roles?: Role[];
+  customerTier?: CustomerTier;
+  merchantTier?: MerchantTier;
+  verifiedIdentity?: boolean;
   createdAt: string;
 }
 

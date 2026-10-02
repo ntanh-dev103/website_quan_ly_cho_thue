@@ -45,7 +45,13 @@ export function ProductGrid() {
     }
 
     if (districtFilter) {
-      result = result.filter((p) => p.district === districtFilter);
+      const df = districtFilter.toLowerCase();
+      result = result.filter((p) => 
+        p.district.toLowerCase() === df || 
+        p.city.toLowerCase() === df ||
+        df.includes(p.city.toLowerCase()) ||
+        p.city.toLowerCase().includes(df)
+      );
     }
 
     Object.entries(eavFilters).forEach(([attrId, value]) => {
