@@ -14,6 +14,7 @@ import {
   COMMISSION_RATES,
 } from '@/entities/user/user.types';
 import { sleep } from '@/shared/lib/utils';
+import { authApi } from '@/api/auth.api';
 
 // ===== Store Interface =====
 interface AuthStore {
@@ -28,7 +29,7 @@ interface AuthStore {
   isLoading: boolean;
 
   // Actions
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password?: string) => Promise<void>;
   register: (data: CustomerRegisterData | MerchantRegisterData, role: 'CUSTOMER' | 'MERCHANT') => Promise<void>;
   logout: () => void;
   updateTier: (newTier: Tier) => void;
@@ -113,10 +114,63 @@ export const useAuthStore = create<AuthStore>()(
       isLoading: false,
 
       // Login
-      login: async (email: string, _password: string) => {
+      login: async (email: string, password = 'password') => {
         set({ isLoading: true });
-        await sleep(600); // Simulate API delay
+        
+        try {
+          // 1. Thử gọi API Backend thực tế
+          const res = await authApi.login({ email, password });
+          if (res?.accessToken) {
+            localStorage.setItem('accessToken', res.accessToken);
+            if (res.refreshToken) {
+              localStorage.setItem('refreshToken', res.refreshToken);
+            }
 
+            const info = res.userInfo;
+            const mappedRole: Role = (info.role?.replace('ROLE_', '') as Role) || 'CUSTOMER';
+            const cTier: CustomerTier = (info.customerTier as CustomerTier) || 'C1';
+            const mTier: MerchantTier = (info.merchantTier as MerchantTier) || 'M1';
+            const mappedTier: Tier = mappedRole === 'ADMIN' ? 'A1' : (mappedRole === 'MERCHANT' ? mTier : cTier);
+
+            const activeUser: User = {
+              id: String(info.id),
+              email: info.email || email,
+              name: info.fullName || email.split('@')[0],
+              phone: info.phone || '',
+              avatar: info.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400',
+              address: info.address || 'TP. Hồ Chí Minh',
+              roles: [mappedRole],
+              customerTier: cTier,
+              merchantTier: mTier,
+              companyName: info.companyName,
+              taxCode: info.taxCode,
+              verifiedIdentity: info.verifiedIdentity || false,
+              createdAt: new Date().toISOString(),
+            };
+
+            set({
+              role: mappedRole,
+              roles: [mappedRole],
+              tier: mappedTier,
+              customerTier: cTier,
+              merchantTier: mTier,
+              user: activeUser,
+              isAuthenticated: true,
+              isLoading: false,
+            });
+            return;
+          }
+        } catch (apiErr: any) {
+          // Nếu backend trả về lỗi từ server (400, 401: sai pass hoặc tài khoản không đúng), ném ra cho UI hiển thị
+          if (apiErr?.response?.status && apiErr.response.status < 500) {
+            set({ isLoading: false });
+            throw apiErr;
+          }
+          console.info('Backend API chưa sẵn sàng hoặc ngoại lệ kết nối, chuyển sang chế độ Mock/Demo Auth:', apiErr?.message);
+        }
+
+        // 2. Chế độ Mock Fallback (Đảm bảo đồ án luôn hoạt động mượt mà khi trình diễn offline)
+        await sleep(400);
         const { role, tier, roles, customerTier, merchantTier } = resolveRoleAndTier(email);
         const mockUser: User = {
           id: crypto.randomUUID(),
@@ -150,8 +204,90 @@ export const useAuthStore = create<AuthStore>()(
       // Register
       register: async (data: CustomerRegisterData | MerchantRegisterData, role: 'CUSTOMER' | 'MERCHANT') => {
         set({ isLoading: true });
-        await sleep(800); // Simulate API delay
 
+        try {
+          // 1. Thử gọi API Backend đăng ký
+          const email = (data as any).email;
+          const password = (data as any).password || '123456';
+          const fullName = 'name' in data ? (data as CustomerRegisterData).name : (data as any).fullName || ('companyName' in data ? (data as MerchantRegisterData).companyName : email);
+
+          let res;
+          if (role === 'MERCHANT') {
+            const mData = data as MerchantRegisterData;
+            const licenseStr = mData.businessLicense instanceof File 
+              ? mData.businessLicense.name 
+              : (typeof mData.businessLicense === 'string' ? mData.businessLicense : undefined);
+
+            res = await authApi.registerMerchant({
+              email,
+              password,
+              fullName,
+              companyName: mData.companyName,
+              taxCode: mData.taxCode,
+              businessLicense: licenseStr,
+              phone: (data as any).phone,
+            });
+          } else {
+            const cData = data as CustomerRegisterData;
+            res = await authApi.registerCustomer({
+              email,
+              password,
+              fullName,
+              phone: (cData as any).phone,
+              address: (cData as any).address,
+            });
+          }
+
+          if (res?.accessToken) {
+            localStorage.setItem('accessToken', res.accessToken);
+            if (res.refreshToken) {
+              localStorage.setItem('refreshToken', res.refreshToken);
+            }
+
+            const info = res.userInfo;
+            const mappedRole: Role = (info.role?.replace('ROLE_', '') as Role) || role;
+            const cTier: CustomerTier = (info.customerTier as CustomerTier) || 'C1';
+            const mTier: MerchantTier = (info.merchantTier as MerchantTier) || 'M1';
+            const mappedTier: Tier = mappedRole === 'MERCHANT' ? mTier : cTier;
+
+            const activeUser: User = {
+              id: String(info.id),
+              email: info.email || email,
+              name: info.fullName || fullName,
+              phone: info.phone,
+              avatar: info.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400',
+              address: info.address || 'TP. Hồ Chí Minh',
+              roles: [mappedRole],
+              customerTier: cTier,
+              merchantTier: mTier,
+              companyName: info.companyName,
+              taxCode: info.taxCode,
+              verifiedIdentity: false,
+              createdAt: new Date().toISOString(),
+            };
+
+            set({
+              role: mappedRole,
+              roles: [mappedRole],
+              tier: mappedTier,
+              customerTier: cTier,
+              merchantTier: mTier,
+              user: activeUser,
+              isAuthenticated: true,
+              isLoading: false,
+            });
+            return;
+          }
+        } catch (apiErr: any) {
+          if (apiErr?.response?.status && apiErr.response.status < 500) {
+            set({ isLoading: false });
+            throw apiErr;
+          }
+          console.info('Backend register offline, fallback to mock register:', apiErr?.message);
+        }
+
+        // 2. Mock Fallback
+        await sleep(500);
         const tier: Tier = role === 'CUSTOMER' ? 'C1' : 'M1';
         const roles: Role[] = [role];
         const mockUser: User = {
@@ -184,6 +320,8 @@ export const useAuthStore = create<AuthStore>()(
 
       // Logout
       logout: () => {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
         set({
           role: 'GUEST',
           roles: ['GUEST'],

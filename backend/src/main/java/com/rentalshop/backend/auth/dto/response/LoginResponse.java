@@ -21,7 +21,16 @@ public class LoginResponse {
     public static class UserInfo {
         private Long id;
         private String username;
+        private String email;
         private String fullName;
         private String role;
+        private String phone;
+        private String avatar;
+        private String address;
+        private String customerTier;
+        private String merchantTier;
+        private String companyName;
+        private String taxCode;
+        private Boolean verifiedIdentity;
     }
 }

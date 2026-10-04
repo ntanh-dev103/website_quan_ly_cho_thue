@@ -40,8 +40,9 @@ export function CustomerRegisterForm() {
       await register({ name, email, password }, 'CUSTOMER');
       toast.success('Đăng ký thành công! Chào mừng bạn đến với RentalShop.');
       navigate('/');
-    } catch {
-      toast.error('Đăng ký thất bại. Vui lòng thử lại.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Đăng ký thất bại. Vui lòng thử lại.';
+      toast.error(message);
     }
   };
 

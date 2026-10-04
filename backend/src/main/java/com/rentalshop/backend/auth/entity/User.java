@@ -21,6 +21,9 @@ public class User {
     @Column(nullable = false, unique = true)
     private String username;
 
+    @Column(unique = true)
+    private String email;
+
     @Column(nullable = false)
     private String password;
 
@@ -30,6 +33,36 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    @Column
+    private String phone;
+
+    @Column
+    private String avatar;
+
+    @Column
+    private String address;
+
+    @Column(name = "customer_tier")
+    @Builder.Default
+    private String customerTier = "C1";
+
+    @Column(name = "merchant_tier")
+    @Builder.Default
+    private String merchantTier = "M1";
+
+    @Column(name = "company_name")
+    private String companyName;
+
+    @Column(name = "tax_code")
+    private String taxCode;
+
+    @Column(name = "business_license")
+    private String businessLicense;
+
+    @Column(name = "verified_identity")
+    @Builder.Default
+    private Boolean verifiedIdentity = false;
 
     @Column(name = "is_active", nullable = false)
     @Builder.Default
@@ -41,5 +74,8 @@ public class User {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
+        if (email == null && username != null && username.contains("@")) {
+            email = username;
+        }
     }
 }

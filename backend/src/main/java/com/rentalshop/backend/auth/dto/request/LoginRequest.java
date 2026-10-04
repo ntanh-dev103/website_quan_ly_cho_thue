@@ -5,9 +5,19 @@ import lombok.Data;
 
 @Data
 public class LoginRequest {
-    @NotBlank(message = "Username không được để trống")
     private String username;
+    private String email;
 
     @NotBlank(message = "Password không được để trống")
     private String password;
+
+    public String getLoginIdentifier() {
+        if (email != null && !email.isBlank()) {
+            return email.trim();
+        }
+        if (username != null && !username.isBlank()) {
+            return username.trim();
+        }
+        return "";
+    }
 }

@@ -101,8 +101,9 @@ export function MerchantRegisterForm() {
         );
         toast.success('Đăng ký Đối tác Cá nhân thành công! Chào mừng bạn gia nhập sàn.');
         navigate('/merchant');
-      } catch {
-        toast.error('Đăng ký thất bại. Vui lòng thử lại.');
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Đăng ký thất bại. Vui lòng thử lại.';
+        toast.error(message);
       }
     } else {
       // B2B Enterprise
@@ -124,8 +125,9 @@ export function MerchantRegisterForm() {
         );
         toast.success('Nộp hồ sơ Đối tác B2B thành công! Hồ sơ đang được chuyên viên duyệt.');
         navigate('/merchant');
-      } catch {
-        toast.error('Đăng ký thất bại. Vui lòng thử lại.');
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Đăng ký thất bại. Vui lòng thử lại.';
+        toast.error(message);
       }
     }
   };
