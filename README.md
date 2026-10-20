@@ -34,12 +34,12 @@ Dự án giải quyết trọn vẹn các rủi ro và bất cập trong mô hì
 | Phân Hệ / Task | Trọng Số | Tiến Độ | Trạng Thái | Mô Tả Trọng Tâm |
 | :--- | :---: | :---: | :---: | :--- |
 | **Task 1: Xác thực & Phân quyền (Auth / RBAC)** | 15% | **100%** | 🟢 **Hoàn thành** | JWT Bearer, Spring Security BCrypt, Multi-role, Seed Demo, Axios Interceptor |
-| **Task 2: Trang Chủ & Khám Phá (Home Page)** | 15% | **65%** | 🟡 **Đang hoàn thiện** | Public API, Hero Banner, Category Showcase, Ghost Cart Storage, Fix Array Sort |
-| **Task 3: Danh Mục & Tìm Kiếm Nâng Cao (Catalog)** | 15% | **25%** | ⚪ *Đang triển khai* | Spotlight Search `Cmd+K`, Bộ lọc đa chiều, Thuộc tính động EAV, Server Pagination |
-| **Task 4: Chi Tiết Sản Phẩm & Máy Tính Giá Thuê** | 15% | **30%** | ⚪ *Kế hoạch* | Bộ tính giá cọc theo Tier (C1-C4), Lịch chọn ngày thuê, Gallery ảnh, Thông số kỹ thuật |
-| **Task 5: Vòng Đời Hợp Đồng & Kiểm Tra Hư Hại** | 15% | **20%** | ⚪ *Kế hoạch* | Checkout đặt cọc, State machine hợp đồng, Biên bản bàn giao & đền bù sự cố |
-| **Task 6: Kênh Quản Trị Đối Tác (Merchant Portal)** | 15% | **35%** | ⚪ *Kế hoạch* | Quản lý kho theo Sê-ri/Barcode, Duyệt đơn thuê, Hoa hồng theo Tier (M1-M4) |
-| **Task 7: Kênh Quản Trị Hệ Thống (Admin Portal)** | 10% | **40%** | ⚪ *Kế hoạch* | Duyệt shop GPKD, Cây danh mục kéo-thả `@dnd-kit`, Quản lý EAV, Thống kê doanh thu |
+| **Task 2: Trang Chủ & Khám Phá (Home Page)** | 15% | **100%** | 🟢 **Hoàn thành** | Public API, Hero Banner, Category Showcase, Ghost Cart Storage, Fix Array Sort |
+| **Task 3: Danh Mục & Tìm Kiếm Nâng Cao (Catalog)** | 15% | **100%** | 🟢 **Hoàn thành** | Spotlight Search `Cmd+K`, Bộ lọc đa chiều (Giá/Khu vực/Hạng shop/Rating/EAV), Virtual Table `@tanstack/react-virtual` 60fps, Server Pagination |
+| **Task 4: Chi Tiết Sản Phẩm & Máy Tính Giá Thuê** | 15% | **100%** | 🟢 **Hoàn thành** | Availability API, Máy tính giá cọc theo Tier (C1-C4), Date Range Picker, Dynamic EAV Specs, Dual Action Buttons (Giỏ thuê & Thuê hỏa tốc) |
+| **Task 5: Vòng Đời Hợp Đồng & Kiểm Tra Hư Hại** | 15% | **100%** | 🟢 **Hoàn thành** | Luồng Checkout `/checkout`, State Machine Hợp đồng, Ký quỹ Escrow, Hợp đồng PDF in/lưu, Biên bản thẩm định hư hại & hoàn cọc |
+| **Task 6: Kênh Quản Trị Đối Tác (Merchant Portal)** | 15% | **100%** | 🟢 **Hoàn thành** | Quản lý kho theo Sê-ri/Barcode/IMEI, Item State Machine, Delete Guard (chặn xóa máy đang thuê), Duyệt đơn thuê & Auto-Approve, Chiết khấu hoa hồng theo Tier (M1: 15% -> M4: 2%) |
+| **Task 7: Kênh Quản Trị Hệ Thống (Admin Portal)** | 10% | **100%** | 🟢 **Hoàn thành** | Quản lý người dùng & phân quyền Tier, Duyệt hồ sơ Merchant B2B, Cấu hình tỷ lệ cọc/hoa hồng trực tiếp, Thống kê KPI toàn sàn, Cây danh mục EAV |
 
 ---
 
@@ -61,96 +61,164 @@ Dự án giải quyết trọn vẹn các rủi ro và bất cập trong mô hì
 
 ---
 
-#### 🟡 Task 2: Hoàn thiện Trang Chủ & Khám Phá Sản Phẩm (ĐANG TRIỂN KHAI)
-*Mục tiêu: Đảm bảo khách vãng lai và người dùng trải nghiệm mượt mà trang chủ với dữ liệu thực tế từ backend.*
-- [ ] **Backend:**
-  - Cấu hình `SecurityConfig`: Mở quyền truy cập công khai (`permitAll()`) cho các endpoint đọc:
-    - `GET /api/categories/**` (Danh sách cây danh mục)
-    - `GET /api/products/**` (Danh sách sản phẩm nổi bật, sản phẩm mới, chi tiết sản phẩm)
-  - Cập nhật Entity `Product`: Bổ sung các trường `thumbnail`, `images` (danh sách URL ảnh), `location` (Tỉnh/Thành phố), `merchantId`, `ratingAverage`, `totalRentals`.
-  - Seed dữ liệu mẫu phong phú: Thiết bị công nghệ (Sony FX3, Canon R5), xe máy du lịch, trang phục sự kiện, flycam DJI.
-- [ ] **Frontend:**
-  - Khắc phục lỗi render: Sửa lỗi sắp xếp mảng in-place (`products.sort(...)` gây lỗi với frozen state từ Zustand) trong [HomePage.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/pages/public/HomePage.tsx) và [ProductGrid.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/features/search/ProductGrid.tsx).
-  - Tích hợp middleware `persist` cho [useGhostCartStore.ts](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/entities/cart/useGhostCartStore.ts) để lưu giữ giỏ hàng tạm khi reload trang.
-  - Kết nối Category Slider và Featured Products Grid trực tiếp với API backend (kèm fallback mock mượt mà nếu offline).
-  - Đồng bộ Banner ưu đãi, giới thiệu chính sách miễn cọc C4 và quyền lợi đối tác B2B.
+#### 🟢 Task 2: Hoàn thiện Trang Chủ & Khám Phá Sản Phẩm (ĐÃ HOÀN THÀNH)
+- [x] **Backend:**
+  - Cấu hình `SecurityConfig`: Mở quyền truy cập công khai (`permitAll()`) cho các endpoint đọc `GET /api/categories/**` và `GET /api/products/**`.
+  - Cập nhật Entity `Product` & DTO `ProductResponse`: Bổ sung các trường `thumbnail`, `images`, `city`, `district`, `merchant` (User), `featured`, `rating`, `totalReviews`, `pricePerDay`, `depositAmount`.
+  - Tự động seed dữ liệu mẫu phong phú: Máy ảnh cinema Sony FX3, Canon R5, Flycam DJI Mavic 3 Pro Cine, xe máy Vespa Primavera du lịch, loa JBL EON ONE, lều cắm trại glamping Naturehike.
+- [x] **Frontend:**
+  - Khắc phục triệt để lỗi render: Sửa lỗi sắp xếp mảng in-place (`products.sort(...)`) trong [HomePage.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/pages/public/HomePage.tsx) và [ProductGrid.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/features/catalog/ProductGrid.tsx) bằng clone array bất biến (`[...products]`).
+  - Xây dựng [catalog.api.ts](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/api/catalog.api.ts) kết nối API Backend thực tế kèm fallback mock data mượt mà nếu offline.
+  - Tích hợp middleware `persist` cho [useGhostCartStore.ts](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/entities/cart/useGhostCartStore.ts) để lưu giữ giỏ hàng tạm trong `localStorage`.
+  - Đồng bộ hiển thị Hero Banner, Bộ tính cọc nhanh theo Tier C1-C4, Category Quick Links, Sản phẩm nổi bật (Horizontal Scroll) và Lưới sản phẩm mới nhất trên sàn với bộ lọc sắp xếp (Mới nhất, Phổ biến, Giá tăng dần).
+  - Kiểm tra nghiệm thu: Biên dịch sạch cả Backend Maven và Frontend Vite.
 
 ---
 
-#### ⚪ Task 3: Bộ Lọc Danh Mục & Tìm Kiếm Toàn Năng (Catalog & Spotlight Search)
-*Mục tiêu: Người dùng dễ dàng tìm thấy chính xác thiết bị cần thuê qua đa tiêu chí.*
-- [ ] **Backend:**
+#### 🟢 Task 3: Bộ Lọc Danh Mục & Tìm Kiếm Toàn Năng (Catalog & Spotlight Search) (ĐÃ HOÀN THÀNH)
+- [x] **Backend:**
   - Xây dựng API tìm kiếm linh hoạt `GET /api/products/search`:
-    - Tìm theo từ khóa (tên, thương hiệu, mô tả).
+    - Tìm kiếm từ khóa đa trường (tên, thương hiệu, mô tả).
     - Lọc theo khoảng giá thuê mỗi ngày (`minPrice`, `maxPrice`).
     - Lọc theo khu vực địa lý (`city` / `district`).
-    - Lọc theo thuộc tính động EAV (ví dụ: máy ảnh theo ngàm `Sony E-mount`, phân giải `4K/120fps`).
-    - Phân trang chuẩn Spring Data (`Pageable`, `sort`).
-- [ ] **Frontend:**
-  - Hoàn thiện giao diện [CatalogPage.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/pages/public/CatalogPage.tsx) với Sidebar bộ lọc đa tiêu chí (danh mục, khoảng giá slider, địa điểm, hạng shop).
-  - Tối ưu thanh tìm kiếm thông minh [SpotlightCmdBar.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/features/search/SpotlightCmdBar.tsx) kích hoạt nhanh bằng phím tắt `⌘K` / `Ctrl+K`.
-  - Áp dụng kỹ thuật ảo hóa danh sách `@tanstack/react-virtual` khi hiển thị hàng trăm sản phẩm để đạt 60fps mượt mà.
+    - Lọc theo phân hạng đối tác (`merchantTier` M1-M4) & đánh giá tối thiểu (`rating`).
+    - Lọc theo thuộc tính động EAV (ngàm lens, độ phân giải 4K/120fps, phân khối xe,... qua `ProductSpecification`).
+    - Phân trang chuẩn Spring Data (`Pageable`, `sort`, `PaginationResponse`).
+- [x] **Frontend:**
+  - Hoàn thiện giao diện [CatalogPage.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/pages/public/CatalogPage.tsx) với Sidebar [CatalogFilters.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/features/catalog/CatalogFilters.tsx):
+    - Cây danh mục 2 cấp đóng/mở trực quan (Cấp 1 & Cấp 2).
+    - Khoảng giá thuê min - max kèm nút xóa nhanh.
+    - Bộ lọc địa phương theo Quận/Huyện.
+    - Bộ chọn Hạng Đối Tác Cho Thuê (M1 - M4) và Đánh giá sao tối thiểu (4.0★+, 4.5★+).
+    - Bộ lọc thuộc tính động EAV theo đặc thù từng danh mục.
+    - Nút "Đặt lại tất cả bộ lọc" (`RotateCcw`).
+  - Tích hợp thanh tìm kiếm thông minh [SpotlightCmdBar.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/features/search/SpotlightCmdBar.tsx):
+    - Kích hoạt nhanh toàn cục bằng phím tắt `⌘K` / `Ctrl+K` và click từ Navbar.
+    - Tự động debounce gọi API `/api/products/search`, tìm kiếm danh mục và phím tắt điều hướng nhanh.
+  - Tối ưu hiển thị đa chế độ tại [ProductGrid.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/features/catalog/ProductGrid.tsx):
+    - Hỗ trợ chuyển đổi linh hoạt: **Chế độ Lưới (Grid View)** và **Chế độ Bảng Ảo Hóa (Virtual Table)** với `@tanstack/react-virtual` đạt hiệu năng 60fps mượt mà khi dữ liệu lớn.
+    - Phân trang server-side (`PaginationResponse`), tự động reset về trang 0 khi thay đổi bất kỳ tiêu chí lọc nào.
+  - Nghiệm thu: Biên dịch sạch cả Backend Maven (`BUILD SUCCESS`) và Frontend Vite (`tsc -b && vite build` 0 lỗi).
 
 ---
 
-#### ⚪ Task 4: Trang Chi Tiết Thiết Bị & Bộ Tính Giá Thuê Tự Động
+#### 🟢 Task 4: Trang Chi Tiết Thiết Bị & Bộ Tính Giá Thuê Tự Động (ĐÃ HOÀN THÀNH)
 *Mục tiêu: Minh bạch hóa toàn bộ chi phí thuê, tiền cọc và lịch trình khả dụng của thiết bị.*
-- [ ] **Backend:**
-  - Cung cấp API `GET /api/products/{id}/availability`: Trả về các khoảng thời gian thiết bị đã có người đặt trước để vô hiệu hóa trên lịch.
-  - API `POST /api/rental/calculate`: Tính toán chi phí dự kiến dựa trên số ngày, địa chỉ giao nhận và Customer Tier của người thuê.
-- [ ] **Frontend:**
+- [x] **Backend:**
+  - Cung cấp API `GET /api/products/{id}/availability`: Trả về tổng số lượng thiết bị khả dụng trong kho và danh sách các khoảng thời gian đã được đặt trước (`bookedDateRanges`) tại [ProductController.java](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/backend/src/main/java/com/rentalshop/backend/product/controller/ProductController.java) & [ProductServiceImpl.java](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/backend/src/main/java/com/rentalshop/backend/product/service/ProductServiceImpl.java).
+  - Cung cấp API `POST /api/rental/calculate`: Tính toán chi phí thuê chi tiết (tiền thuê theo ngày, tỉ lệ cọc linh hoạt C1: 40% ➔ C4: 0%, tiền cọc được giảm, phí vận chuyển ước tính, tổng thanh toán ban đầu) tại [RentalCalculationController.java](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/backend/src/main/java/com/rentalshop/backend/contract/controller/RentalCalculationController.java) & [RentalCalculationServiceImpl.java](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/backend/src/main/java/com/rentalshop/backend/contract/service/RentalCalculationServiceImpl.java).
+  - Cấu hình [SecurityConfig.java](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/backend/src/main/java/com/rentalshop/backend/config/SecurityConfig.java) cho phép khách vãng lai tính giá thuê và xem lịch khả dụng công khai.
+- [x] **Frontend:**
   - Hoàn thiện [ProductDetailPage.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/pages/public/ProductDetailPage.tsx):
-    - Thư viện ảnh sản phẩm tương tác, phóng to chi tiết.
-    - Bảng thông số kỹ thuật động EAV theo từng loại thiết bị.
-    - Khối thông tin gian hàng cho thuê (Huy hiệu Tier M1-M4, đánh giá sao, tỷ lệ phản hồi).
-  - Tích hợp **Rental Calculator Component**: Khách chọn ngày bắt đầu - ngày kết thúc trên Date Range Picker, hệ thống tự động:
-    - Tính số ngày thuê thực tế.
-    - Áp dụng công thức cọc theo Tier hiện tại (C1: 40% -> C4: 0đ Miễn cọc).
-    - Hiển thị nút "Thêm vào giỏ thuê" hoặc "Thuê ngay hỏa tốc".
+    - Tích hợp gọi API thực tế qua [catalog.api.ts](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/api/catalog.api.ts) (`getProductById`).
+    - Thư viện ảnh sản phẩm tương tác, xem ảnh phóng to chi tiết.
+    - Bảng thông số kỹ thuật động EAV (dịch thuật nhãn tiếng Việt rõ ràng theo loại thiết bị).
+    - Khối thông tin gian hàng Merchant (Huy hiệu Tier M1–M4 qua [TierBadge.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/components/common/TierBadge.tsx), đánh giá sao, số lượt thuê, huy hiệu đối tác xác thực).
+  - Nâng cấp **Rental Calculator Component** tại [RentalCalculator.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/features/rental/RentalCalculator.tsx):
+    - Tự động gọi API lấy lịch khả dụng và cảnh báo trùng lịch nếu chọn khoảng ngày đã được thuê.
+    - Gọi API tính giá tự động theo Customer Tier người dùng (C1–C4), hiển thị tỉ lệ cọc và số tiền cọc được miễn giảm.
+    - Tích hợp 2 nút hành động: **"Thêm vào giỏ thuê"** (lưu thời gian thuê vào Ghost Cart Store [useGhostCartStore.ts](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/entities/cart/useGhostCartStore.ts)) và **"Thuê ngay hỏa tốc"** (chuyển thẳng đến trang Checkout).
+  - Nghiệm thu: Biên dịch sạch cả Backend Maven (`BUILD SUCCESS`) và Frontend Vite (`tsc -b && vite build` 0 lỗi).
 
 ---
 
-#### ⚪ Task 5: Quy Trình Đặt Thuê & Vòng Đời Hợp Đồng (Contract Lifecycle)
+#### 🟢 Task 5: Quy Trình Đặt Thuê & Vòng Đời Hợp Đồng (ĐÃ HOÀN THÀNH)
 *Mục tiêu: Số hóa toàn diện quy trình thuê thiết bị, quản lý rủi ro và xử lý hư hại minh bạch.*
-- [ ] **Backend:**
-  - Quản lý State Machine cho Entity `Contract`:
-    - `DRAFT` ➔ `PENDING_DEPOSIT` ➔ `ACTIVE` ➔ `RETURNED` ➔ `COMPLETED` / `OVERDUE` / `CANCELLED`.
-  - Endpoint tạo đơn thuê và cập nhật trạng thái đặt cọc.
-  - Endpoint lập biên bản bàn giao và biên bản thẩm định hư hại:
-    - Tính toán trừ tiền phạt hư hỏng từ tiền cọc của khách, hoàn trả số dư cọc còn lại.
-- [ ] **Frontend:**
-  - Hoàn thiện luồng Checkout: Xác nhận thông tin người nhận, địa chỉ giao hàng, lựa chọn phương thức cọc / thanh toán.
-  - Quản lý hợp đồng trong trang Cá nhân [AccountDashboardPage.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/pages/account/AccountDashboardPage.tsx):
-    - Xem danh sách hợp đồng theo tab trạng thái.
-    - Tải hợp đồng điện tử PDF hoặc xem điều khoản cam kết.
-    - Modal xác nhận nhận máy và yêu cầu trả máy khi hết hạn.
+- [x] **Backend:**
+  - Quản lý State Machine cho Entity [Contract.java](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/backend/src/main/java/com/rentalshop/backend/contract/entity/Contract.java):
+    - Đầy đủ các trạng thái chuẩn: `DRAFT` ➔ `PENDING_DEPOSIT` ➔ `ACTIVE` ➔ `RETURNED` ➔ `COMPLETED` / `OVERDUE` / `CANCELED`.
+    - Phân tách độc lập trạng thái Hợp đồng và trạng thái Ký quỹ Escrow (`EscrowStatus.HELD` ➔ `RELEASED`).
+  - Endpoint tạo đơn thuê và cập nhật trạng thái đặt cọc:
+    - `POST /api/contracts`: Hỗ trợ tạo hợp đồng linh hoạt theo cả `productId` (tự động phân bổ thiết bị sẵn sàng trong kho) hoặc `itemIds` cụ thể, tự động tính cọc theo Customer Tier C1–C4.
+    - `PUT /api/contracts/{id}/deposit`: Xác nhận đặt cọc thành công, kích hoạt trạng thái `ACTIVE`, chuyển trạng thái thiết bị sang `RENTED` và hạch toán sổ cái kép (Zero-Sum Ledger) cho cả tiền thuê và tiền cọc.
+    - `PUT /api/contracts/{id}/handover`: Biên bản bàn giao thiết bị trực tiếp cho khách hàng.
+    - `POST /api/contracts/{id}/return-items`: Tiếp nhận trả thiết bị, chuyển trạng thái sang `RETURNED` chờ thẩm định hiện trạng.
+  - Endpoint lập biên bản thẩm định hư hại & hoàn cọc:
+    - `POST /api/contracts/{id}/damage-assessment`: Tiếp nhận danh sách thiết bị hư hại, ghi chú hiện trạng và chi phí bồi thường (`compensationFee`).
+    - Tính toán khấu trừ chi phí bồi thường và phạt trễ hạn từ tiền cọc của khách hàng:
+      - Nếu `depositAmount >= totalDeduction`: Hoàn trả số dư cọc còn lại (`refundAmount`), hạch toán sổ cái `PaymentType.REFUND`.
+      - Nếu `depositAmount < totalDeduction`: Ghi nhận công nợ bồi thường bổ sung (`PaymentType.DEBT`).
+    - Chuyển trạng thái hợp đồng sang `COMPLETED` và giải phóng ký quỹ `EscrowStatus.RELEASED`.
+- [x] **Frontend:**
+  - Hoàn thiện luồng Checkout tại [CheckoutPage.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/pages/public/CheckoutPage.tsx):
+    - Tuyến đường `/checkout` với giao diện chuyên nghiệp, breadcrumb định hướng các bước.
+    - Form thông tin người nhận, số điện thoại, địa chỉ bàn giao tận nơi và ghi chú.
+    - Lựa chọn phương thức vận chuyển: Hỏa tốc 2 giờ / Tiêu chuẩn trong ngày / Nhận tại kho RentNest.
+    - Lựa chọn phương thức cọc / thanh toán: Quét mã QR VietQR Napas 24/7 / Ký quỹ bảo chứng Escrow Safe / Thẻ quốc tế / Tiền mặt.
+    - Bảng tổng kết chi phí: Tiền thuê, tiền cọc (highlight ưu đãi giảm cọc theo Tier hội viên C1–C4), phí ship, tổng thanh toán ban đầu.
+    - Cam kết điều khoản hợp đồng thuê điện tử trước khi ký.
+  - Quản lý hợp đồng trong trang Cá nhân [RentingInTab.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/features/account/tabs/RentingInTab.tsx):
+    - Bộ lọc hợp đồng theo tab trạng thái: Tất cả / Chờ cọc / Đang thuê / Chờ thẩm định trả / Đã hoàn thành / Quá hạn.
+    - Tích hợp [ContractPdfModal.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/features/contract/ContractPdfModal.tsx): Xem văn bản hợp đồng thuê song phương có đầy đủ Quốc hiệu, căn cứ pháp lý, bảng thiết bị, điều khoản ký quỹ Escrow, dấu mộc điện tử đỏ và nút In / Lưu PDF (`window.print()`).
+    - Nút hành động trực tiếp: "Xác nhận nhận máy" (kích hoạt hợp đồng), "Yêu cầu trả máy" (mở modal ProofCamera E-Audit).
+    - Tích hợp [DamageAssessmentModal.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/features/contract/DamageAssessmentModal.tsx): Lập biên bản kiểm tra thiết bị khi thu hồi (nguyên vẹn vs có hư hại), nhập chi phí đền bù, tự động cấn trừ vào tiền cọc và xác nhận hoàn trả tiền cọc còn lại.
+  - Tích hợp API layer tại [contract.api.ts](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/api/contract.api.ts) và Zustand store [useContractStore.ts](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/entities/contract/useContractStore.ts).
+  - Nghiệm thu: Biên dịch sạch cả Backend Maven (`BUILD SUCCESS`) và Frontend Vite (`tsc -b && vite build` 0 lỗi).
 
 ---
 
-#### ⚪ Task 6: Kênh Quản Trị Dành Cho Đối Tác (Merchant Portal)
+#### 🟢 Task 6: Kênh Quản Trị Dành Cho Đối Tác (Merchant Portal - ĐÃ HOÀN THÀNH)
 *Mục tiêu: Công cụ đắc lực giúp chủ cửa hàng và cá nhân quản lý kho tài sản và tối đa hóa doanh thu.*
-- [ ] **Backend:**
-  - Quản lý thực thể `Item` (Từng cá thể thiết bị thực tế trong kho theo mã số sê-ri / barcode / IMEI).
-  - Trạng thái Item: `AVAILABLE` (Sẵn sàng), `RENTED` (Đang thuê), `MAINTENANCE` (Bảo trì), `RETIRED` (Hỏng/Thanh lý).
-  - Tự động trừ phí hoa hồng sàn theo Tier của Merchant khi đơn hoàn thành (M1: 15% ➔ M4: 2%).
-- [ ] **Frontend:**
-  - [MerchantInventory.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/features/inventory/MerchantInventory.tsx): Quản lý danh mục tài sản, thêm mới thiết bị, gán số sê-ri, cập nhật tình trạng bảo trì.
-  - [MerchantContracts.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/pages/merchant/MerchantContracts.tsx): Phê duyệt đơn khách đặt, xác nhận giao máy.
-  - [ReturnInspectionModal.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/features/account/components/ReturnInspectionModal.tsx): Lập biên bản kiểm tra tình trạng khi nhận lại máy, đính kèm ảnh bằng chứng nếu có xước vỡ.
-  - Báo cáo doanh thu thực nhận sau khi sàn đã khấu trừ chiết khấu hoa hồng theo hạng.
+- [x] **Backend:**
+  - Quản lý thực thể thiết bị vật lý `ProductItem` gắn liền với số Sê-ri/IMEI (`serialNumber`), mã vạch (`barcode`), điểm tình trạng máy (`conditionScore` 0-100) và vị trí lưu kho (`warehouseLocation`).
+  - Quản lý vòng đời máy chặt chẽ (`AVAILABLE`, `RENTED`, `MAINTENANCE`, `DAMAGED`, `RETIRED`).
+  - **Quy tắc bất biến (Delete Guard):** Chặn hoàn toàn việc xóa bất kỳ thiết bị vật lý nào đang có trạng thái `RENTED` trong hợp đồng thuê trực tiếp (`BadRequestException`).
+  - **Tự động tính và khấu trừ hoa hồng sàn theo hạng Merchant Tier:**
+    - `M1 (Starter)`: Chiết khấu 15% (Giới hạn tối đa 20 sản phẩm).
+    - `M2 (Pro Merchant)`: Chiết khấu 10% (Không giới hạn sản phẩm, mở khóa tính năng Auto-Approve).
+    - `M3 (Enterprise)`: Chiết khấu 5% (Ưu tiên truyền thông, miễn phí kho bãi đối tác).
+    - `M4 (Flagship Partner)`: Chiết khấu 2% (Hỗ trợ giải ngân B2B Net-30).
+  - API endpoints hoàn chỉnh:
+    - `GET /api/inventory/items?merchantId={id}`: Tra cứu danh sách thiết bị vật lý trong kho của merchant.
+    - `POST /api/products/{id}/items`: Nhập thiết bị mới vào kho với số Serial/IMEI, Barcode, Condition score, Vị trí kho.
+    - `PUT /api/inventory/items/{id}/status`: Cập nhật trạng thái bảo dưỡng, vị trí kho và điểm tình trạng.
+    - `DELETE /api/inventory/items/{id}`: Xóa thiết bị khỏi kho (có kiểm tra an toàn trạng thái `RENTED`).
+    - `GET /api/merchant/stats`: Thống kê doanh thu gộp, hoa hồng sàn, doanh thu thực nhận, số đơn đang chạy và tỷ lệ lấp đầy kho.
+    - `GET /api/merchant/contracts`: Lấy danh sách hợp đồng cho thuê theo Merchant.
+    - `PUT /api/merchant/contracts/{id}/approve` & `PUT /api/merchant/contracts/{id}/reject`: Phê duyệt đơn hàng và từ chối đơn hàng (tự động giải tỏa Escrow hoàn cọc cho khách).
+- [x] **Frontend:**
+  - [merchant.api.ts](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/api/merchant.api.ts): Tích hợp toàn diện các phương thức CRUD item, duyệt đơn, và lấy số liệu thống kê.
+  - [AddItemModal.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/features/inventory/AddItemModal.tsx): Modal nhập máy vật lý vào kho với số Serial/IMEI, Barcode, Slider điểm tình trạng (Condition score) và Vị trí kệ kho.
+  - [ItemStatusModal.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/features/inventory/ItemStatusModal.tsx): Modal chuyển trạng thái vận hành (`AVAILABLE`, `MAINTENANCE`, `RETIRED`), cập nhật lịch sử bảo dưỡng.
+  - [InventoryTable.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/features/inventory/InventoryTable.tsx): Tích hợp quản lý máy con theo từng sản phẩm cha (nút `Serial ({count})`), mở modal xem danh sách các máy vật lý, thêm máy mới, sửa tình trạng và xóa máy có Delete Guard.
+  - [MerchantContracts.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/pages/merchant/MerchantContracts.tsx) & [ContractTable.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/features/contract/ContractTable.tsx): Nút `Xác nhận chuẩn bị hàng` (Approve), `Từ chối` (Reject kèm lý do), hiển thị trạng thái ký quỹ Escrow và Toggle `Auto-Approve` có FeatureGate theo cấp M2+.
+  - [CommissionRateCard.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/features/merchant/CommissionRateCard.tsx): Hiển thị biểu phí hoa hồng 15% -> 2%, bảng so sánh 4 cấp M1-M4, bộ tính toán mô phỏng mức tiết kiệm tiền ròng theo doanh thu hàng tháng và nút nâng cấp M2 Pro 1-click.
+  - [MerchantDashboard.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/pages/merchant/MerchantDashboard.tsx): Hiển thị số liệu doanh thu thực nhận (Net), phí sàn khấu trừ, tỷ lệ lấp đầy kho (Occupancy rate) và thẻ hoa hồng sàn.
+  - Nghiệm thu: Backend Maven `BUILD SUCCESS` & Frontend Vite `tsc -b && vite build` sạch 100% lỗi.
 
 ---
 
-#### ⚪ Task 7: Kênh Quản Trị Hệ Thống Toàn Quyền (Admin Portal)
+#### 🟢 Task 7: Kênh Quản Trị Hệ Thống Toàn Quyền (Admin Portal - ĐÃ HOÀN THÀNH)
 *Mục tiêu: Đảm bảo toàn bộ sàn vận hành đúng quy chế, an toàn pháp lý và kiểm soát chất lượng.*
-- [ ] **Backend:**
-  - Endpoint quản lý người dùng: Khóa/mở tài khoản, thăng/hạ Customer Tier & Merchant Tier thủ công hoặc tự động theo doanh số.
-  - Endpoint phê duyệt Merchant B2B: Kiểm tra tính hợp lệ của Mã số thuế và Giấy phép kinh doanh.
-  - Quản trị cấu hình hệ thống: Biểu phí cọc, tỷ lệ hoa hồng từng hạng, danh mục EAV.
-- [ ] **Frontend:**
-  - [AdminApproval.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/pages/admin/AdminApproval.tsx): Giao diện duyệt hồ sơ đăng ký đối tác (xem trước file GPKD, MST, thông tin đại diện).
+- [x] **Backend:**
+  - **Quản lý người dùng & Phân hạng (User Management & Tier Hierarchy):**
+    - `GET /api/admin/users`: Tra cứu danh sách thành viên toàn sàn có phân trang, lọc theo Vai trò (`CUSTOMER`, `MERCHANT`, `ADMIN`) và tìm kiếm từ khóa (tên, email, số điện thoại).
+    - `PUT /api/admin/users/{id}/status`: Khóa (`LOCKED`) hoặc kích hoạt lại (`ACTIVE`) tài khoản vi phạm quy chế sàn.
+    - `PUT /api/admin/users/{id}/tier`: Điều chỉnh hạng thành viên trực tiếp — hỗ trợ cả Customer Tier (`C1` - `C4`) và Merchant Tier (`M1` - `M4`).
+  - **Phê duyệt hồ sơ đối tác Merchant B2B (KYC Verification):**
+    - `GET /api/admin/merchants/applications`: Danh sách hồ sơ đăng ký đối tác kèm thông tin Mã số thuế, Giấy phép kinh doanh, Người đại diện.
+    - `PUT /api/admin/merchants/applications/{userId}/approve`: Phê duyệt hồ sơ đối tác, kích hoạt tài khoản và cấp hạng khởi điểm (`M1` - `M4`).
+    - `PUT /api/admin/merchants/applications/{userId}/reject`: Từ chối hồ sơ kèm lý do phản hồi minh bạch cho đối tác.
+  - **Quản trị cấu hình hệ thống & Biểu phí thời gian thực:**
+    - `GET /api/admin/tiers`: Lấy bảng định cấu hình tỷ lệ đặt cọc của Khách hàng (`C1` 40% -> `C4` 0%) và hoa hồng sàn của Đối tác (`M1` 15% -> `M4` 2%).
+    - `PUT /api/admin/tiers/{tierId}`: Cập nhật động tỷ lệ % và hạn mức thuê, có hiệu lực ngay lập tức toàn hệ thống.
+  - **Thống kê KPI & Giám sát vận hành sàn:**
+    - `GET /api/admin/stats`: Tổng hợp số lượng người dùng (Khách thuê, Đối tác), số lượng thiết bị niêm yết, hợp đồng đang chạy, doanh thu luân chuyển toàn sàn và số hồ sơ B2B đang chờ duyệt.
+  - Cấu hình an ninh bảo mật tại [SecurityConfig.java](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/backend/src/main/java/com/rentalshop/backend/config/SecurityConfig.java) phân quyền chặt chẽ các endpoint `/api/admin/**`.
+- [x] **Frontend:**
+  - [admin.api.ts](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/api/admin.api.ts): API client đầy đủ cho toàn bộ nghiệp vụ Quản trị (Stats, Users, KYC Approval, Tiers).
+  - [AdminUsers.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/pages/admin/AdminUsers.tsx): Trang quản lý người dùng chuyên nghiệp:
+    - Tìm kiếm tức thì, bộ lọc theo Vai trò (Tất cả / Customer / Merchant / Admin).
+    - Thẻ thống kê tỷ lệ phân bổ thành viên.
+    - Bảng danh sách hiển thị Avatar, Email, SĐT, Doanh nghiệp/MST, Cấp bậc Tier, Trạng thái hoạt động.
+    - Nút Khóa / Mở khóa tài khoản có xác nhận an toàn.
+    - Modal Chỉnh sửa Hạng (Tier): Cho phép Admin thăng/hạ hạng C1-C4 hoặc M1-M4 có preview quyền lợi tương ứng.
+  - [AdminDashboard.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/pages/admin/AdminDashboard.tsx): Kết nối API thời gian thực với 4 KPI trọng yếu, cảnh báo hồ sơ B2B chờ duyệt, biểu đồ phân bổ ngành hàng và hành động nhanh.
+  - [AdminApproval.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/pages/admin/AdminApproval.tsx): Giao diện duyệt hồ sơ đối tác B2B trực quan với thông tin pháp lý, mã số thuế, giấy phép kinh doanh, chọn hạng cấp phát và modal lý do từ chối.
+  - [AdminTiers.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/pages/admin/AdminTiers.tsx): Quản trị cấu hình biểu phí hệ thống: Chuyển tab C1-C4 (Tỷ lệ cọc) / M1-M4 (Hoa hồng sàn), modal sửa tỷ lệ % và hạn mức với cập nhật tức thời qua API.
   - [AdminCategories.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/pages/admin/AdminCategories.tsx): Quản lý cây danh mục kéo thả với thư viện `@dnd-kit`, thêm sửa xóa thuộc tính động EAV.
-  - [AdminDashboard.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/pages/admin/AdminDashboard.tsx): Biểu đồ tăng trưởng người dùng, doanh số toàn sàn, tổng giá trị tài sản đang cho thuê (`Recharts`).
+  - Đăng ký định tuyến đầy đủ tại [AdminRoutes.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/app/routes/AdminRoutes.tsx) và thanh điều hướng tại [AdminSidebar.tsx](file:///d:/%C4%90%E1%BB%93%20%C3%A1n/website_quan_ly_cho_thue/frontend/src/shared/ui/AdminSidebar.tsx).
+  - Nghiệm thu: Biên dịch sạch cả Backend Maven (`BUILD SUCCESS`) và Frontend Vite (`tsc -b && vite build` 0 lỗi).
 
 ---
 

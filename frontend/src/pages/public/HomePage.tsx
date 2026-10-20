@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowRight, 
@@ -6,7 +6,9 @@ import {
   ChevronRight, 
   SlidersHorizontal, 
   ShoppingBag, 
-  PackageOpen 
+  PackageOpen,
+  Store,
+  CheckCircle2
 } from 'lucide-react';
 import { Button } from '@/shared/ui/button';
 import { ProductCard } from '@/shared/ui/ProductCard';
@@ -17,6 +19,8 @@ import { CategoryQuickLinks } from '@/features/home/CategoryQuickLinks';
 import { TierBenefitSection } from '@/features/home/TierBenefitSection';
 import { CuratedKitsSection } from '@/features/home/CuratedKitsSection';
 import { mockProducts } from '@/entities/product/product.mock';
+import { type Product } from '@/entities/product/product.types';
+import { catalogApi } from '@/api/catalog.api';
 import { useGhostCartStore } from '@/entities/cart/useGhostCartStore';
 
 type SortFilter = 'newest' | 'popular' | 'price_asc';
@@ -24,32 +28,55 @@ type SortFilter = 'newest' | 'popular' | 'price_asc';
 export function HomePage() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+  const [products, setProducts] = useState<Product[]>(mockProducts);
   const [sortFilter, setSortFilter] = useState<SortFilter>('newest');
   const featuredScrollRef = useRef<HTMLDivElement>(null);
   
   const { items, setIsOpen: setCartOpen } = useGhostCartStore();
   const totalItems = items.length;
 
-  // Skeleton loading: 800ms on initial mount
+  // Load real products from Backend API with graceful mock fallback
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 800);
-    return () => clearTimeout(timer);
+    let isMounted = true;
+    async function loadData() {
+      try {
+        const data = await catalogApi.getProducts();
+        if (isMounted && data && data.length > 0) {
+          setProducts(data);
+        }
+      } catch (err) {
+        console.warn('API getProducts offline or error, using mock data:', err);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    }
+    loadData();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  // 6 Featured Products
-  const featuredProducts = mockProducts.filter((p) => p.featured).slice(0, 6);
+  // 6 Featured Products (or top 6 if no explicit featured)
+  const featuredProducts = useMemo(() => {
+    const list = products.filter((p) => p.featured);
+    return list.length > 0 ? list.slice(0, 6) : products.slice(0, 6);
+  }, [products]);
 
-  // 8 Newest Products with Interactive Sorting
-  const sortedNewestProducts = [...mockProducts].sort((a, b) => {
-    if (sortFilter === 'popular') {
-      return (b.merchant.totalReviews || 0) - (a.merchant.totalReviews || 0);
-    }
-    if (sortFilter === 'price_asc') {
-      return a.pricePerDay - b.pricePerDay;
-    }
-    // Default 'newest'
-    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-  }).slice(0, 8);
+  // 8 Newest Products with Interactive Safe Sorting
+  const sortedNewestProducts = useMemo(() => {
+    return [...products].sort((a, b) => {
+      if (sortFilter === 'popular') {
+        return (b.merchant?.totalReviews || 0) - (a.merchant?.totalReviews || 0);
+      }
+      if (sortFilter === 'price_asc') {
+        return a.pricePerDay - b.pricePerDay;
+      }
+      // Default 'newest'
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    }).slice(0, 8);
+  }, [products, sortFilter]);
 
   const handleFeaturedScroll = (direction: 'left' | 'right') => {
     if (featuredScrollRef.current) {
@@ -225,6 +252,56 @@ export function HomePage() {
             description="Hiện chưa có sản phẩm mới nào theo bộ lọc này." 
           />
         )}
+      </section>
+
+      {/* 8. B2B MERCHANT PARTNER CTA */}
+      <section className="py-10 sm:py-14 max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="rounded-2xl border border-gray-200/90 bg-white p-6 sm:p-10 shadow-2xs flex flex-col lg:flex-row items-center justify-between gap-8">
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50 border border-primary-200 text-primary-700 text-xs font-bold mb-3">
+              <Store className="h-3.5 w-3.5" />
+              <span>Chương trình Đối tác Cho thuê RentHub Partner</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-950 tracking-tight">
+              Bạn là chủ sở hữu thiết bị hoặc cơ sở kinh doanh cho thuê?
+            </h2>
+            <p className="text-sm sm:text-base text-gray-600 mt-2 leading-relaxed">
+              Gia nhập mạng lưới Merchant RentHub để tiếp cận hàng nghìn khách thuê đã xác minh tín nhiệm. Hoa hồng cạnh tranh chỉ từ 2% - 15% theo cấp bậc đối tác M1 - M4.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
+              <div className="flex items-center gap-2 text-xs font-medium text-gray-700">
+                <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                <span>Bảo hiểm tài sản & Ký số điện tử</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs font-medium text-gray-700">
+                <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                <span>Quản lý kho sê-ri & bảo trì tự động</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs font-medium text-gray-700">
+                <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                <span>Đối soát doanh thu minh bạch</span>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col sm:flex-row lg:flex-col gap-3 w-full lg:w-auto shrink-0">
+            <Button
+              size="lg"
+              onClick={() => navigate('/partner')}
+              className="bg-primary-600 hover:bg-primary-700 text-white font-bold px-6 shadow-md shadow-primary-600/20 group"
+            >
+              <span>Đăng ký mở gian hàng (M1)</span>
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => navigate('/partner')}
+              className="border-gray-200 text-gray-700 hover:bg-gray-50 font-semibold"
+            >
+              <span>Tìm hiểu chính sách đối tác</span>
+            </Button>
+          </div>
+        </div>
       </section>
 
       {/* FLOATING CART ICON (Mobile & Desktop quick access) */}

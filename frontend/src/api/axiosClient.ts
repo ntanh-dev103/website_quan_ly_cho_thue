@@ -15,9 +15,14 @@ const axiosClient = axios.create({
   timeout: 15000,
 });
 
-// Request interceptor - Đính kèm JWT vào header
+// Request interceptor - Đính kèm JWT vào header & chuẩn hóa URL
 axiosClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
+    // Tránh bị duplicate /api/api/... nếu url truyền vào đã có /api
+    if (config.url && config.url.startsWith('/api/')) {
+      config.url = config.url.replace(/^\/api/, '');
+    }
+
     const token = localStorage.getItem('accessToken');
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -40,6 +45,8 @@ axiosClient.interceptors.response.use(
   },
   async (error) => {
     const { response } = error;
+    const method = error.config?.method?.toLowerCase() || '';
+    const isMutation = ['post', 'put', 'patch', 'delete'].includes(method);
 
     if (response) {
       const { message } = response.data || {};
@@ -70,12 +77,20 @@ axiosClient.interceptors.response.use(
             } catch {
               localStorage.removeItem('accessToken');
               localStorage.removeItem('refreshToken');
+              localStorage.removeItem('rental-shop-auth');
+              if (typeof window !== 'undefined') {
+                window.dispatchEvent(new Event('renthub:logout'));
+              }
               toast.error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
               return Promise.reject(error);
             }
           } else {
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
+            localStorage.removeItem('rental-shop-auth');
+            if (typeof window !== 'undefined') {
+              window.dispatchEvent(new Event('renthub:logout'));
+            }
           }
           break;
         }
@@ -83,21 +98,21 @@ axiosClient.interceptors.response.use(
           toast.error('Bạn không có quyền thực hiện hành động này');
           break;
         case 404:
-          toast.error(errorMessage);
+          if (isMutation) toast.error(errorMessage);
           break;
         case 409:
           toast.error(errorMessage);
           break;
         case 500:
-          toast.error('Lỗi máy chủ nội bộ. Vui lòng thử lại sau');
+          if (isMutation) toast.error('Lỗi máy chủ nội bộ. Vui lòng thử lại sau');
           break;
         default:
-          toast.error(errorMessage);
+          if (isMutation) toast.error(errorMessage);
       }
     } else if (error.request) {
       // Backend có thể đang tắt, không kết nối được
       console.warn('Không thể kết nối đến máy chủ backend tại /api');
-    } else {
+    } else if (isMutation) {
       toast.error('Đã có lỗi xảy ra.');
     }
 

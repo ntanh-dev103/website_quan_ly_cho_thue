@@ -45,13 +45,19 @@ export interface Product {
   depositAmount: number;
   
   images: string[]; // At least 1 main + thumbnails
+  imageUrl?: string;
   status: ItemStatus;
   
   eavValues: EAVValue[];
+  attributes?: Record<string, any>;
   
   district: string;
   city: string;
   
   createdAt: string;
   featured?: boolean;
+  rating?: number;
+  totalRentals?: number;
+  totalStock?: number;
 }
+

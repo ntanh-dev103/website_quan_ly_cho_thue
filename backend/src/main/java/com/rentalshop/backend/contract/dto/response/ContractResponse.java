@@ -24,5 +24,12 @@ public class ContractResponse {
     private ContractStatus status;
     private EscrowStatus escrowStatus;
     private String manualReturnCode;
+    private Long productId;
+    private String productName;
+    private String productImage;
+    private String deliveryAddress;
+    private Double deliveryFee;
+    private String damageAssessmentNotes;
+    private Double refundAmount;
     private List<ContractDetailResponse> details;
 }

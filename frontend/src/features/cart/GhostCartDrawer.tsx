@@ -14,7 +14,6 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import { useGhostCartStore } from '@/entities/cart/useGhostCartStore';
 import { useAuthStore } from '@/entities/user/useAuthStore';
-import { useContractStore } from '@/entities/contract/useContractStore';
 import { formatCurrency } from '@/shared/lib/utils';
 import { Button } from '@/shared/ui/button';
 import { toast } from 'sonner';
@@ -35,12 +34,10 @@ const QUICK_COUPONS = [
 export function GhostCartDrawer() {
   const navigate = useNavigate();
   const { items, isOpen, setIsOpen, removeItem, updateDays, clearCart, getTotalPrice } = useGhostCartStore();
-  const { isAuthenticated, user, getDepositRate } = useAuthStore();
-  const { addContract } = useContractStore();
+  const { getDepositRate } = useAuthStore();
 
   const [voucherInput, setVoucherInput] = useState('');
   const [appliedVoucher, setAppliedVoucher] = useState<AppliedVoucher | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // ALL hooks MUST be called before any early return.
   // Compute derived values via useMemo unconditionally.
@@ -97,68 +94,13 @@ export function GhostCartDrawer() {
     toast.info('Đã hủy áp dụng mã giảm giá');
   };
 
-  const handleCheckout = async () => {
-    if (!isAuthenticated) {
-      toast.info('Vui lòng đăng nhập để hoàn tất hợp đồng thuê', {
-        description: 'Các sản phẩm trong giỏ thuê của bạn sẽ được giữ nguyên.',
-      });
-      setIsOpen(false);
-      navigate('/login');
-      return;
-    }
-
+  const handleCheckout = () => {
     if (items.length === 0) {
       toast.error('Giỏ đồ thuê đang trống!');
       return;
     }
-
-    setIsSubmitting(true);
-
-    try {
-      const now = new Date();
-      items.forEach((item) => {
-        const itemRentalCost = item.product.pricePerDay * item.days;
-        const ratio = rawSubtotal > 0 ? itemRentalCost / rawSubtotal : 1;
-        const itemDiscount = Math.round(discountAmount * ratio);
-        const itemFinalPrice = Math.max(0, itemRentalCost - itemDiscount);
-
-        addContract({
-          contractCode: `HD-${Math.floor(1000 + Math.random() * 9000)}`,
-          product: item.product,
-          customer: user || { 
-            id: 'c-1', 
-            name: 'Khách hàng', 
-            email: 'customer@example.com', 
-            roles: ['CUSTOMER'], 
-            customerTier: 'C1',
-            createdAt: now.toISOString(),
-          },
-          merchantId: item.product.merchant.id,
-          startDate: now.toISOString(),
-          endDate: new Date(now.getTime() + item.days * 86400000).toISOString(),
-          totalDays: item.days,
-          rentalFee: itemFinalPrice,
-          depositAmount: Math.round(item.product.depositAmount * depositRate),
-          deliveryFee: 0,
-          totalAmount: itemFinalPrice + Math.round(item.product.depositAmount * depositRate),
-        });
-      });
-
-      clearCart();
-      setAppliedVoucher(null);
-      setIsOpen(false);
-
-      toast.success('🎉 Đặt thuê thành công!', {
-        description: `Đã tạo ${items.length} hợp đồng thuê. Đối tác sẽ sớm liên hệ xác nhận bàn giao.`,
-        duration: 5000,
-      });
-
-      navigate('/account');
-    } catch {
-      toast.error('Đã xảy ra lỗi khi tạo hợp đồng thuê. Vui lòng thử lại.');
-    } finally {
-      setIsSubmitting(false);
-    }
+    setIsOpen(false);
+    navigate('/checkout');
   };
 
   return (
@@ -438,17 +380,10 @@ export function GhostCartDrawer() {
 
                 <Button
                   onClick={handleCheckout}
-                  disabled={isSubmitting}
                   className="col-span-8 rounded-xl font-bold bg-primary-600 hover:bg-primary-700 text-white text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
                 >
-                  {isSubmitting ? (
-                    <span>Đang xử lý...</span>
-                  ) : (
-                    <>
-                      <span>{isAuthenticated ? 'Xác nhận thuê ngay' : 'Đăng nhập để thuê'}</span>
-                      <ArrowRight className="h-3.5 w-3.5" />
-                    </>
-                  )}
+                  <span>Ký hợp đồng & Thanh toán</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
               </div>
 

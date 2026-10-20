@@ -13,7 +13,12 @@ import lombok.NoArgsConstructor;
 public class ProductItemResponse {
     private Long id;
     private Long productId;
+    private String productName;
     private String skuCode;
+    private String serialNumber;
+    private String barcode;
     private ItemStatus status;
+    private Integer conditionScore;
+    private String warehouseLocation;
     private String notes;
 }

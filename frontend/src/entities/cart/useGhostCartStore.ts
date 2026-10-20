@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { toast } from 'sonner';
 import { type Product } from '@/entities/product/product.types';
 
@@ -6,13 +7,15 @@ export interface CartItem {
   product: Product;
   days: number;
   addedAt: number;
+  startDate?: string;
+  endDate?: string;
 }
 
 interface GhostCartState {
   items: CartItem[];
   isOpen: boolean;
   lastRemovedItem: CartItem | null;
-  addItem: (product: Product, days?: number) => void;
+  addItem: (product: Product, days?: number, startDate?: string, endDate?: string) => void;
   removeItem: (productId: string) => void;
   updateDays: (productId: string, days: number) => void;
   clearCart: () => void;
@@ -22,23 +25,27 @@ interface GhostCartState {
   getTotalItems: () => number;
 }
 
-export const useGhostCartStore = create<GhostCartState>((set, get) => ({
-  items: [],
-  isOpen: false,
-  lastRemovedItem: null,
+export const useGhostCartStore = create<GhostCartState>()(
+  persist(
+    (set, get) => ({
+      items: [],
+      isOpen: false,
+      lastRemovedItem: null,
 
-  addItem: (product: Product, days = 1) => {
+  addItem: (product: Product, days = 1, startDate?: string, endDate?: string) => {
     const existing = get().items.find((item) => item.product.id === product.id);
 
     if (existing) {
       set((state) => ({
         items: state.items.map((item) =>
-          item.product.id === product.id ? { ...item, days: item.days + days } : item
+          item.product.id === product.id
+            ? { ...item, days: item.days + days, startDate: startDate || item.startDate, endDate: endDate || item.endDate }
+            : item
         ),
       }));
     } else {
       set((state) => ({
-        items: [...state.items, { product, days, addedAt: Date.now() }],
+        items: [...state.items, { product, days, addedAt: Date.now(), startDate, endDate }],
       }));
     }
 
@@ -105,4 +112,11 @@ export const useGhostCartStore = create<GhostCartState>((set, get) => ({
   getTotalItems: () => {
     return get().items.length;
   },
-}));
+}),
+    {
+      name: 'renthub-ghost-cart',
+      partialize: (state) => ({ items: state.items }),
+    }
+  )
+);
+

@@ -511,3 +511,10 @@ export const useAuthStore = create<AuthStore>()(
     }
   )
 );
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('renthub:logout', () => {
+    useAuthStore.getState().logout();
+  });
+}
+

@@ -1,4 +1,4 @@
-import { Search, Truck, Layers, Car, Camera, Shirt, ChevronDown } from 'lucide-react';
+import { Search, Truck, Layers, Car, Camera, Shirt, ChevronDown, Star, Award, RotateCcw } from 'lucide-react';
 import { Input } from '@/shared/ui/input';
 import { Button } from '@/shared/ui/button';
 import { Label } from '@/shared/ui/label';
@@ -7,6 +7,13 @@ import { useCatalogFilterStore } from './useCatalogFilterStore';
 import { useMemo, useState } from 'react';
 
 const DISTRICTS = ['Quận 1', 'Quận 3', 'Đống Đa', 'Thủ Đức'];
+
+const MERCHANT_TIERS = [
+  { tier: 'M4', name: 'Kim Cương', badge: '💎 M4 (Ưu đãi 2%)' },
+  { tier: 'M3', name: 'Vàng', badge: '👑 M3 (Uy tín 5%)' },
+  { tier: 'M2', name: 'Bạc', badge: '🥈 M2 (10%)' },
+  { tier: 'M1', name: 'Chuẩn', badge: '🔹 M1 (15%)' },
+];
 
 const CAT_ICON_MAP: Record<string, any> = {
   'cat-vehicles': Car,
@@ -19,8 +26,14 @@ export function CatalogFilters() {
     query, setQuery,
     categorySlug, setCategorySlug,
     districtFilter, setDistrictFilter,
-    eavFilters, toggleEavFilter
+    merchantTier, setMerchantTier,
+    rating, setRating,
+    minPrice, setMinPrice,
+    maxPrice, setMaxPrice,
+    eavFilters, toggleEavFilter,
+    resetFilters,
   } = useCatalogFilterStore();
+
 
   const [expandedCatIds, setExpandedCatIds] = useState<string[]>(categories.map(c => c.id));
 
@@ -64,6 +77,51 @@ export function CatalogFilters() {
             }}
           />
         </div>
+      </div>
+
+      {/* Price Range */}
+      <div className="space-y-3">
+        <Label className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
+          Giá thuê / ngày
+        </Label>
+        <div className="flex items-center gap-2">
+          <div className="flex-1">
+            <Input
+              type="number"
+              min={0}
+              placeholder="Từ"
+              defaultValue={minPrice ?? ''}
+              onBlur={(e) => {
+                const v = Number(e.currentTarget.value);
+                setMinPrice(v > 0 ? v : null);
+              }}
+              className="text-sm"
+            />
+          </div>
+          <span className="text-gray-400 text-sm shrink-0">—</span>
+          <div className="flex-1">
+            <Input
+              type="number"
+              min={0}
+              placeholder="Đến"
+              defaultValue={maxPrice ?? ''}
+              onBlur={(e) => {
+                const v = Number(e.currentTarget.value);
+                setMaxPrice(v > 0 ? v : null);
+              }}
+              className="text-sm"
+            />
+          </div>
+        </div>
+        {(minPrice || maxPrice) && (
+          <button
+            type="button"
+            onClick={() => { setMinPrice(null); setMaxPrice(null); }}
+            className="text-[11px] font-semibold text-primary-600 hover:underline cursor-pointer"
+          >
+            Xóa khoảng giá
+          </button>
+        )}
       </div>
 
       {/* Categories (2-Level Tree Navigation) */}
@@ -191,7 +249,7 @@ export function CatalogFilters() {
           Khu vực
         </Label>
         <select
-          className="flex h-10 w-full items-center justify-between rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500"
+          className="flex h-10 w-full items-center justify-between rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 cursor-pointer"
           value={districtFilter}
           onChange={(e) => setDistrictFilter(e.target.value)}
         >
@@ -201,6 +259,87 @@ export function CatalogFilters() {
           ))}
         </select>
       </div>
+
+      {/* Merchant Tier Filter (Hạng Đối Tác Sàn M1 - M4) */}
+      <div className="space-y-3 pt-2 border-t border-gray-100">
+        <div className="flex items-center justify-between">
+          <Label className="text-xs font-bold text-gray-900 uppercase tracking-wider flex items-center gap-1.5">
+            <Award className="h-3.5 w-3.5 text-primary-600" />
+            Hạng Đối Tác Cho Thuê
+          </Label>
+          {merchantTier && (
+            <button
+              type="button"
+              onClick={() => setMerchantTier('')}
+              className="text-[11px] font-semibold text-primary-600 hover:underline cursor-pointer"
+            >
+              Tất cả
+            </button>
+          )}
+        </div>
+        <div className="grid grid-cols-2 gap-1.5">
+          {MERCHANT_TIERS.map((t) => {
+            const isSelected = merchantTier === t.tier;
+            return (
+              <button
+                key={t.tier}
+                type="button"
+                onClick={() => setMerchantTier(isSelected ? '' : t.tier)}
+                className={`flex items-center justify-center p-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+                  isSelected
+                    ? 'bg-primary-600 border-primary-600 text-white shadow-2xs'
+                    : 'bg-white border-gray-200 text-gray-700 hover:border-primary-300 hover:bg-gray-50'
+                }`}
+              >
+                {t.badge}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Minimum Rating Filter */}
+      <div className="space-y-3 pt-2 border-t border-gray-100">
+        <div className="flex items-center justify-between">
+          <Label className="text-xs font-bold text-gray-900 uppercase tracking-wider flex items-center gap-1.5">
+            <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+            Đánh Giá Tối Thiểu
+          </Label>
+          {rating && (
+            <button
+              type="button"
+              onClick={() => setRating(null)}
+              className="text-[11px] font-semibold text-primary-600 hover:underline cursor-pointer"
+            >
+              Tất cả
+            </button>
+          )}
+        </div>
+        <div className="flex gap-2">
+          {[
+            { label: 'Tất cả', val: null },
+            { label: '4.0★+', val: 4.0 },
+            { label: '4.5★+', val: 4.5 },
+          ].map((item) => {
+            const isSelected = rating === item.val;
+            return (
+              <button
+                key={item.label}
+                type="button"
+                onClick={() => setRating(item.val)}
+                className={`flex-1 py-1.5 text-xs font-semibold rounded-lg border transition-all cursor-pointer ${
+                  isSelected
+                    ? 'bg-amber-500 border-amber-500 text-white shadow-2xs'
+                    : 'bg-white border-gray-200 text-gray-700 hover:border-amber-300'
+                }`}
+              >
+                {item.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
 
       {/* Dynamic EAV Filters */}
       {availableAttributes.length > 0 && (
@@ -248,6 +387,19 @@ export function CatalogFilters() {
             <Button size="sm" variant="secondary" className="h-8">Kiểm tra</Button>
           </div>
         </div>
+      </div>
+
+      {/* Reset All Filters Button */}
+      <div className="pt-2">
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full gap-2 text-xs font-semibold text-gray-600 hover:text-red-600 hover:border-red-200 hover:bg-red-50/50 cursor-pointer"
+          onClick={resetFilters}
+        >
+          <RotateCcw className="h-3.5 w-3.5" />
+          Đặt lại tất cả bộ lọc
+        </Button>
       </div>
     </div>
   );

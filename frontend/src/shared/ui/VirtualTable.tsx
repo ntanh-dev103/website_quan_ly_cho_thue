@@ -34,49 +34,63 @@ export function VirtualTable<T>({
     <div 
       ref={parentRef} 
       className={`overflow-auto border border-gray-200 rounded-xl bg-white ${className}`}
-      style={{ maxHeight: '600px' }} // Chiều cao tối đa của vùng cuộn
+      style={{ maxHeight: '600px' }}
     >
-      <table className="w-full text-sm text-left relative">
-        <thead className="bg-gray-50 sticky top-0 z-10 shadow-[0_1px_0_0_rgba(229,231,235,1)]">
-          <tr>
-            {columns.map((col, index) => (
-              <th 
-                key={index} 
-                className="py-3 px-4 font-semibold text-gray-600"
-                style={{ width: col.width }}
-              >
-                {col.header}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody
-          style={{
-            height: `${rowVirtualizer.getTotalSize()}px`,
-            position: 'relative',
-          }}
-        >
-          {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-            const item = data[virtualRow.index];
-            return (
-              <tr
-                key={virtualRow.index}
-                className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors absolute w-full"
-                style={{
-                  height: `${virtualRow.size}px`,
-                  transform: `translateY(${virtualRow.start}px)`,
-                }}
-              >
-                {columns.map((col, colIndex) => (
-                  <td key={colIndex} className="py-2 px-4 truncate">
-                    {col.cell ? col.cell(item) : String(item[col.accessorKey])}
-                  </td>
-                ))}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <div className="w-full text-sm text-left min-w-[720px]">
+        {/* Table Header */}
+        <div className="bg-gray-50/90 backdrop-blur-xs sticky top-0 z-10 border-b border-gray-200 flex w-full">
+          {columns.map((col, index) => (
+            <div 
+              key={index} 
+              className="py-3.5 px-4 font-semibold text-gray-700 shrink-0 select-none flex items-center"
+              style={{ width: col.width || `${100 / columns.length}%` }}
+            >
+              {col.header}
+            </div>
+          ))}
+        </div>
+
+        {/* Table Body */}
+        {data.length === 0 ? (
+          <div className="py-16 text-center text-slate-400 text-xs">
+            Không có dữ liệu hiển thị
+          </div>
+        ) : (
+          <div
+            style={{
+              height: `${rowVirtualizer.getTotalSize()}px`,
+              position: 'relative',
+              width: '100%',
+            }}
+          >
+            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+              const item = data[virtualRow.index];
+              return (
+                <div
+                  key={virtualRow.index}
+                  className="border-b border-gray-100 hover:bg-slate-50/70 transition-colors absolute top-0 left-0 w-full flex items-center"
+                  style={{
+                    height: `${virtualRow.size}px`,
+                    transform: `translateY(${virtualRow.start}px)`,
+                  }}
+                >
+                  {columns.map((col, colIndex) => (
+                    <div 
+                      key={colIndex} 
+                      className="py-2.5 px-4 shrink-0 flex items-center overflow-hidden"
+                      style={{ width: col.width || `${100 / columns.length}%` }}
+                    >
+                      {col.cell ? col.cell(item) : (
+                        <span className="truncate">{String(item[col.accessorKey] ?? '')}</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Users, LayoutGrid, Layers, Settings, LogOut, BarChart3 } from 'lucide-react';
+import { Users, LayoutGrid, Layers, Settings, LogOut, BarChart3, UserCheck } from 'lucide-react';
 import { useAuthStore } from '@/entities/user/useAuthStore';
 import { Button } from '@/shared/ui/button';
 import { cn } from '@/shared/lib/utils';
@@ -9,8 +9,9 @@ export function AdminSidebar() {
   const pendingMerchantsCount = 5; // Mock PENDING count
 
   const navItems = [
-    { name: 'Tổng quan', to: '/admin', icon: BarChart3, exact: true, disabled: true },
+    { name: 'Tổng quan', to: '/admin', icon: BarChart3, exact: true },
     { name: 'Duyệt đối tác', to: '/admin/merchants', icon: Users, badge: pendingMerchantsCount },
+    { name: 'Quản lý người dùng', to: '/admin/users', icon: UserCheck },
     { name: 'Quản lý danh mục', to: '/admin/categories', icon: LayoutGrid },
     { name: 'Cấu hình Tiers', to: '/admin/tiers', icon: Layers },
     { name: 'Cài đặt hệ thống', to: '/admin/settings', icon: Settings, disabled: true },
