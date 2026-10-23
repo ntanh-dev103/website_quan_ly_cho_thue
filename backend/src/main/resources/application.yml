@@ -28,3 +28,9 @@ logging:
   level:
     com.rental: DEBUG
     org.springframework.security: DEBUG
+
+app:
+  jwt:
+    secret: RentHubSecureSecretKeyForJWTAuthHS256BitAlgorithmNeedAtLeast32Bytes2026!
+    expiration: 900000            # 15 phút (15 * 60 * 1000 ms)
+    refresh-expiration: 604800000   # 7 ngày (7 * 24 * 60 * 60 * 1000 ms)

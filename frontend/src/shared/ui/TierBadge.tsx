@@ -6,6 +6,7 @@ import {
   type MerchantTier,
   CUSTOMER_TIER_INFO,
   MERCHANT_TIER_INFO,
+  TIER_CODE_NAMES,
 } from '@/entities/user/user.types';
 
 interface TierBadgeProps {
@@ -14,14 +15,24 @@ interface TierBadgeProps {
   size?: 'sm' | 'md' | 'lg';
   className?: string;
   showLabel?: boolean;
+  variant?: 'standard' | 'code';
+  customLabel?: string;
 }
 
-export function TierBadge({ role, tier, size = 'md', className, showLabel = true }: TierBadgeProps) {
+export function TierBadge({ 
+  role, 
+  tier, 
+  size = 'md', 
+  className, 
+  showLabel = true,
+  variant = 'code',
+  customLabel,
+}: TierBadgeProps) {
   const info = role === 'CUSTOMER'
     ? CUSTOMER_TIER_INFO[tier as CustomerTier]
     : role === 'MERCHANT'
       ? MERCHANT_TIER_INFO[tier as MerchantTier]
-      : null;
+      : (tier.startsWith('C') ? CUSTOMER_TIER_INFO[tier as CustomerTier] : (tier.startsWith('M') ? MERCHANT_TIER_INFO[tier as MerchantTier] : null));
 
   if (!info) {
     if (role === 'ADMIN') {
@@ -68,7 +79,11 @@ export function TierBadge({ role, tier, size = 'md', className, showLabel = true
     >
       <span className="leading-none">{info.icon}</span>
       {showLabel && (
-        <span>{role === 'CUSTOMER' ? 'Khách' : 'Đối tác'} {info.label}</span>
+        <span>
+          {customLabel ?? (variant === 'code' && (tier in TIER_CODE_NAMES)
+            ? TIER_CODE_NAMES[tier as CustomerTier | MerchantTier]
+            : `${role === 'CUSTOMER' ? 'Khách' : 'Đối tác'} ${info.label}`)}
+        </span>
       )}
     </span>
   );

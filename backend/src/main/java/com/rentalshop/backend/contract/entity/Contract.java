@@ -56,6 +56,21 @@ public class Contract {
     @Column(nullable = false)
     private ContractStatus status;
 
+    @Column(name = "delivery_address")
+    private String deliveryAddress;
+
+    @Column(name = "delivery_fee")
+    @Builder.Default
+    private Double deliveryFee = 0.0;
+
+    @Column(name = "damage_assessment_notes", length = 1000)
+    private String damageAssessmentNotes;
+
+    @Column(name = "refund_amount")
+    @Builder.Default
+    private Double refundAmount = 0.0;
+
+
     // --- V2.0: Escrow state is INDEPENDENT of contract status ---
     @Enumerated(EnumType.STRING)
     @Column(name = "escrow_status", nullable = false)

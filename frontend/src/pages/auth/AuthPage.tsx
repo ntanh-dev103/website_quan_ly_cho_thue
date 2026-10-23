@@ -1,43 +1,29 @@
-import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
-import { Package, Shield, TrendingUp, Star } from 'lucide-react';
-import { Tabs, TabsList, TabsTrigger } from '@/shared/ui/tabs';
+/* Hallmark · component: AuthPage · genre: modern-minimal · theme: Indigo/Slate
+ * philosophy: Dual-split responsive layout, tactile card framing, seamless auth-mode tabs, zero-slop typography
+ */
+import { useLocation, Navigate, Link } from 'react-router-dom';
+import { Compass, ArrowLeft, Building2, User, LogIn } from 'lucide-react';
 import { LoginForm } from '@/features/auth/LoginForm';
 import { CustomerRegisterForm } from '@/features/auth/CustomerRegisterForm';
 import { MerchantRegisterForm } from '@/features/auth/MerchantRegisterForm';
+import { AuthProductShowcase } from '@/features/auth/AuthProductShowcase';
 import { useAuthStore } from '@/entities/user/useAuthStore';
-import { cn } from '@/shared/lib/utils';
 
-type RoleTab = 'customer' | 'merchant';
-type ModeTab = 'login' | 'register';
+interface AuthPageProps {
+  mode?: 'login' | 'register' | 'partner';
+}
 
-const FEATURES = [
-  {
-    icon: Package,
-    title: 'Hàng ngàn sản phẩm',
-    description: 'Đa dạng danh mục cho thuê, từ thiết bị đến đồ dùng cá nhân.',
-  },
-  {
-    icon: Shield,
-    title: 'An toàn & bảo mật',
-    description: 'Hệ thống đặt cọc thông minh theo hạng thành viên.',
-  },
-  {
-    icon: TrendingUp,
-    title: 'Nền tảng cho đối tác',
-    description: 'Quản lý hàng hóa, theo dõi doanh thu và hoa hồng dễ dàng.',
-  },
-  {
-    icon: Star,
-    title: 'Hệ thống phân hạng',
-    description: 'Thuê nhiều hơn, được ưu đãi nhiều hơn. Lên hạng Kim cương 💎.',
-  },
-];
-
-export function AuthPage() {
+export function AuthPage({ mode }: AuthPageProps) {
+  const location = useLocation();
   const { isAuthenticated, role } = useAuthStore();
-  const [roleTab, setRoleTab] = useState<RoleTab>('customer');
-  const [modeTab, setModeTab] = useState<ModeTab>('login');
+
+  // Determine current mode by prop or route pathname
+  const currentMode: 'login' | 'register' | 'partner' = (() => {
+    if (mode) return mode;
+    if (location.pathname.startsWith('/register')) return 'register';
+    if (location.pathname.startsWith('/partner')) return 'partner';
+    return 'login';
+  })();
 
   // Redirect if already logged in
   if (isAuthenticated) {
@@ -52,165 +38,111 @@ export function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
-      {/* LEFT PANEL - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] gradient-hero relative overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute inset-0">
-          <div className="absolute top-1/4 -left-20 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-1/4 right-0 w-80 h-80 bg-primary-400/10 rounded-full blur-3xl" />
-          <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-secondary-400/10 rounded-full blur-3xl" />
-          {/* Grid pattern */}
-          <div
-            className="absolute inset-0 opacity-[0.03]"
-            style={{
-              backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
-              backgroundSize: '60px 60px',
-            }}
-          />
-        </div>
-
-        <div className="relative z-10 flex flex-col justify-center px-12 xl:px-20 text-white">
-          {/* Logo */}
-          <div className="mb-10">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm">
-                <Package className="h-6 w-6" />
-              </div>
-              <span className="text-2xl font-bold tracking-tight">RentalShop</span>
-            </div>
-            <p className="text-white/60 text-sm font-light">Nền tảng cho thuê đồ dùng hàng đầu</p>
+    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-slate-50 text-slate-900 overflow-x-clip relative">
+      {/* Top Header on Desktop: Logo and Back Button */}
+      <header className="absolute top-0 left-0 right-0 z-30 hidden lg:flex items-center justify-between px-8 xl:px-12 py-5 pointer-events-none">
+        <Link to="/" className="inline-flex items-center gap-3 group pointer-events-auto">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-600 text-white shadow-md shadow-primary-500/20 transition-transform group-hover:scale-105">
+            <Compass className="h-5 w-5" />
           </div>
-
-          {/* Headline */}
-          <h1 className="text-4xl xl:text-5xl font-bold leading-tight mb-6">
-            Thuê bất cứ thứ gì,
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-primary-200">
-              mọi lúc, mọi nơi.
-            </span>
-          </h1>
-          <p className="text-lg text-white/70 mb-12 max-w-md leading-relaxed">
-            Tiết kiệm chi phí, giảm lãng phí. Kết nối người cần thuê với hàng ngàn đối tác cho thuê uy tín.
-          </p>
-
-          {/* Feature cards */}
-          <div className="grid grid-cols-2 gap-4">
-            {FEATURES.map((feature) => (
-              <div
-                key={feature.title}
-                className="group rounded-xl bg-white/[0.07] backdrop-blur-sm border border-white/10 p-4 hover:bg-white/[0.12] transition-all duration-300"
-              >
-                <feature.icon className="h-5 w-5 text-primary-200 mb-2.5 group-hover:scale-110 transition-transform" />
-                <h3 className="text-sm font-semibold mb-1">{feature.title}</h3>
-                <p className="text-xs text-white/50 leading-relaxed">{feature.description}</p>
-              </div>
-            ))}
+          <div className="flex flex-col">
+            <span className="text-xl font-black tracking-tight text-white">RentHub</span>
+            <span className="text-[10px] text-slate-400 font-medium tracking-wide uppercase">Rental Platform</span>
           </div>
+        </Link>
+
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 text-xs font-semibold text-slate-700 hover:text-indigo-600 bg-white/90 hover:bg-white px-3.5 py-2 rounded-lg transition-all border border-slate-200 shadow-sm pointer-events-auto"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          <span>Về trang chủ</span>
+        </Link>
+      </header>
+
+      {/* LEFT 50%: Visual Ecosystem Showcase */}
+      <div className="hidden lg:flex lg:w-1/2 xl:w-[52%] relative overflow-hidden h-screen border-r border-slate-800 bg-slate-900">
+        <div className="w-full h-full pt-20">
+          <AuthProductShowcase />
         </div>
       </div>
 
-      {/* RIGHT PANEL - Form */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-10 bg-[#F9FAFB]">
-        <div className="w-full max-w-md animate-fade-in">
-          {/* Mobile logo */}
-          <div className="lg:hidden flex items-center gap-2 mb-8">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-primary">
-              <Package className="h-5 w-5 text-white" />
+      {/* RIGHT 50%: Auth Form Container */}
+      <div className="flex-1 lg:w-1/2 xl:w-[48%] flex flex-col justify-between p-5 sm:p-8 lg:p-12 xl:p-16 min-h-screen lg:h-screen lg:overflow-y-auto bg-slate-50">
+        {/* Mobile top bar */}
+        <div className="flex items-center justify-between pb-4 border-b border-slate-200 lg:hidden">
+          <Link to="/" className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600 text-white shadow-sm">
+              <Compass className="h-4 w-4" />
             </div>
-            <span className="text-xl font-bold text-gray-900">RentalShop</span>
-          </div>
+            <span className="text-lg font-black text-slate-900">RentHub</span>
+          </Link>
 
-          {/* Heading */}
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-1">
-              {modeTab === 'login' ? 'Đăng nhập' : 'Tạo tài khoản'}
-            </h2>
-            <p className="text-gray-500">
-              {modeTab === 'login'
-                ? 'Chào mừng bạn quay lại! Vui lòng đăng nhập.'
-                : 'Tạo tài khoản mới để bắt đầu sử dụng.'}
-            </p>
-          </div>
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            <span>Trang chủ</span>
+          </Link>
+        </div>
 
-          {/* Role Toggle */}
-          <Tabs value={roleTab} onValueChange={(v) => setRoleTab(v as RoleTab)} className="mb-6">
-            <TabsList className="w-full">
-              <TabsTrigger value="customer" className="flex-1">
-                🛒 Khách hàng
-              </TabsTrigger>
-              <TabsTrigger value="merchant" className="flex-1">
-                🏪 Đối tác
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-
-          {/* Mode Toggle */}
-          <div className="flex gap-1 mb-6 p-1 bg-gray-100 rounded-lg">
-            <button
-              type="button"
-              onClick={() => setModeTab('login')}
-              className={cn(
-                'flex-1 py-2 text-sm font-medium rounded-md transition-all duration-200 cursor-pointer',
-                modeTab === 'login'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700'
-              )}
+        {/* Form Container */}
+        <div className="w-full max-w-lg mx-auto my-auto py-6 sm:py-8">
+          {/* Mode Switcher Tabs */}
+          <div className="grid grid-cols-3 p-1 mb-6 rounded-xl bg-slate-200/80 border border-slate-200 text-xs font-semibold text-slate-600">
+            <Link
+              to="/login"
+              className={`flex items-center justify-center gap-1.5 py-2 rounded-lg transition-all ${
+                currentMode === 'login'
+                  ? 'bg-white text-indigo-700 shadow-sm font-bold'
+                  : 'hover:text-slate-900'
+              }`}
             >
-              Đăng nhập
-            </button>
-            <button
-              type="button"
-              onClick={() => setModeTab('register')}
-              className={cn(
-                'flex-1 py-2 text-sm font-medium rounded-md transition-all duration-200 cursor-pointer',
-                modeTab === 'register'
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700'
-              )}
+              <LogIn className="w-3.5 h-3.5" />
+              <span>Đăng nhập</span>
+            </Link>
+            <Link
+              to="/register"
+              className={`flex items-center justify-center gap-1.5 py-2 rounded-lg transition-all ${
+                currentMode === 'register'
+                  ? 'bg-white text-indigo-700 shadow-sm font-bold'
+                  : 'hover:text-slate-900'
+              }`}
             >
-              Đăng ký
-            </button>
+              <User className="w-3.5 h-3.5" />
+              <span>Đăng ký thuê</span>
+            </Link>
+            <Link
+              to="/partner"
+              className={`flex items-center justify-center gap-1.5 py-2 rounded-lg transition-all ${
+                currentMode === 'partner'
+                  ? 'bg-white text-indigo-700 shadow-sm font-bold'
+                  : 'hover:text-slate-900'
+              }`}
+            >
+              <Building2 className="w-3.5 h-3.5" />
+              <span>Đối tác shop</span>
+            </Link>
           </div>
 
-          {/* Form Content */}
-          <div className="animate-fade-in" key={`${roleTab}-${modeTab}`}>
-            {modeTab === 'login' ? (
-              <LoginForm />
-            ) : roleTab === 'customer' ? (
-              <CustomerRegisterForm />
-            ) : (
-              <MerchantRegisterForm />
-            )}
+          {/* Form Card */}
+          <div className="rounded-2xl bg-white border border-slate-200 p-6 sm:p-8 shadow-sm">
+            {currentMode === 'login' && <LoginForm />}
+            {currentMode === 'register' && <CustomerRegisterForm />}
+            {currentMode === 'partner' && <MerchantRegisterForm />}
           </div>
 
-          {/* Footer toggle */}
-          <p className="text-center text-sm text-gray-500 mt-6">
-            {modeTab === 'login' ? (
-              <>
-                Chưa có tài khoản?{' '}
-                <button
-                  type="button"
-                  onClick={() => setModeTab('register')}
-                  className="text-primary-600 font-medium hover:text-primary-700 cursor-pointer"
-                >
-                  Đăng ký ngay
-                </button>
-              </>
-            ) : (
-              <>
-                Đã có tài khoản?{' '}
-                <button
-                  type="button"
-                  onClick={() => setModeTab('login')}
-                  className="text-primary-600 font-medium hover:text-primary-700 cursor-pointer"
-                >
-                  Đăng nhập
-                </button>
-              </>
-            )}
+          {/* Legal / Privacy note */}
+          <p className="text-center text-[11px] text-slate-500 mt-4 leading-relaxed">
+            Bằng việc tiếp tục, bạn đồng ý với <a href="#" className="underline hover:text-slate-800">Điều khoản sử dụng</a> và <a href="#" className="underline hover:text-slate-800">Chính sách bảo mật thông tin</a> của RentHub.
           </p>
         </div>
+
+        {/* Bottom copyright */}
+        <footer className="text-center text-xs text-slate-400 py-2 border-t border-slate-200/60 mt-4">
+          &copy; {new Date().getFullYear()} RentHub Technology Platform. Nền tảng cho thuê tài sản thông minh.
+        </footer>
       </div>
     </div>
   );

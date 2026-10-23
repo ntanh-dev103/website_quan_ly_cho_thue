@@ -9,10 +9,10 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
-  const { isAuthenticated, role } = useAuthStore();
+  const { isAuthenticated, role, roles, hasRole, canAccess } = useAuthStore();
 
   if (!isAuthenticated) {
-    return <Navigate to="/auth" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   if (requiredRole) {
@@ -23,7 +23,16 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
       ADMIN: 3,
     };
 
-    if (ROLE_HIERARCHY[role] < ROLE_HIERARCHY[requiredRole]) {
+    // User is authorized if they have the specific role, or dual roles contain it,
+    // or their main role hierarchy is greater/equal, or canAccess returns true.
+    const isAuthorized =
+      role === requiredRole ||
+      (roles && roles.includes(requiredRole)) ||
+      hasRole?.(requiredRole) ||
+      canAccess?.(requiredRole) ||
+      ROLE_HIERARCHY[role] >= ROLE_HIERARCHY[requiredRole];
+
+    if (!isAuthorized) {
       return <Navigate to="/" replace />;
     }
   }

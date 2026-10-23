@@ -83,27 +83,45 @@ export function DemoWidget() {
               </div>
             </div>
 
-            <div className="pt-2 border-t border-gray-100 grid grid-cols-2 gap-2">
+            <div className="pt-2 border-t border-gray-100 space-y-2">
               <button
-                onClick={() => handleRoleChange('GUEST', 'G1')}
-                className={`text-xs font-medium py-2 rounded-lg border transition-all ${
-                  role === 'GUEST'
-                    ? 'bg-gray-800 text-white border-gray-800'
-                    : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                }`}
+                onClick={() => {
+                  useAuthStore.getState().setRoleAndTier('CUSTOMER', 'C3', ['CUSTOMER', 'MERCHANT'], 'C3', 'M2');
+                }}
+                className="w-full text-xs font-bold py-2 rounded-lg border border-emerald-300 bg-gradient-to-r from-emerald-50 to-primary-50 text-emerald-800 hover:bg-emerald-100 flex items-center justify-center gap-1.5 transition-all shadow-2xs"
               >
-                Guest
+                🔄 Dual Role: C3 VIP + M2 Pro
               </button>
-              <button
-                onClick={() => handleRoleChange('ADMIN', 'A1')}
-                className={`text-xs font-medium py-2 rounded-lg border transition-all ${
-                  role === 'ADMIN'
-                    ? 'bg-red-600 text-white border-red-600 shadow-md shadow-red-500/20'
-                    : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                }`}
+
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => handleRoleChange('GUEST', 'G1')}
+                  className={`text-xs font-medium py-2 rounded-lg border transition-all ${
+                    role === 'GUEST'
+                      ? 'bg-gray-800 text-white border-gray-800'
+                      : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                  }`}
+                >
+                  Guest
+                </button>
+                <button
+                  onClick={() => handleRoleChange('ADMIN', 'A1')}
+                  className={`text-xs font-medium py-2 rounded-lg border transition-all ${
+                    role === 'ADMIN'
+                      ? 'bg-red-600 text-white border-red-600 shadow-md shadow-red-500/20'
+                      : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                  }`}
+                >
+                  Admin
+                </button>
+              </div>
+
+              <a
+                href="/account"
+                className="block text-center text-xs font-bold py-2 px-3 rounded-lg bg-primary-600 text-white hover:bg-primary-700 transition-colors shadow-sm"
               >
-                Admin
-              </button>
+                Mở /account Dashboard →
+              </a>
             </div>
           </div>
         </div>

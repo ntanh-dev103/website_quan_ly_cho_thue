@@ -22,6 +22,11 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.success(authService.login(request)));
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<ApiResponse<LoginResponse>> register(@Valid @RequestBody com.rentalshop.backend.auth.dto.request.RegisterRequest request) {
+        return ResponseEntity.status(201).body(ApiResponse.created("Đăng ký tài khoản thành công", authService.register(request)));
+    }
+
     @PostMapping("/refresh")
     public ResponseEntity<ApiResponse<LoginResponse>> refresh(@Valid @RequestBody RefreshRequest request) {
         return ResponseEntity.ok(ApiResponse.success(authService.refresh(request)));

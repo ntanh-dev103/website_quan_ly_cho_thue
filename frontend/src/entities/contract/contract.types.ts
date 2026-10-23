@@ -1,7 +1,17 @@
 import { type Product } from '../product/product.types';
 import { type User } from '../user/user.types';
 
-export type ContractStatus = 'PENDING' | 'APPROVED' | 'RENTING' | 'RETURNED' | 'CANCELLED' | 'OVERDUE';
+export type ContractStatus = 
+  | 'DRAFT' 
+  | 'PENDING_DEPOSIT' 
+  | 'PENDING' 
+  | 'APPROVED' 
+  | 'ACTIVE' 
+  | 'RENTING' 
+  | 'RETURNED' 
+  | 'COMPLETED' 
+  | 'CANCELLED' 
+  | 'OVERDUE';
 
 export interface Contract {
   id: string;
@@ -19,6 +29,12 @@ export interface Contract {
   status: ContractStatus;
   createdAt: string;
   deliveryAddress?: string;
+  paymentMethod?: string;
+  escrowStatus?: string;
+  penaltyFee?: number;
+  compensationFee?: number;
+  refundAmount?: number;
+  damageAssessmentNotes?: string;
   damageReport?: DamageReport;
 }
 

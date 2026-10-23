@@ -6,15 +6,25 @@ const HomePage = React.lazy(() => import('@/pages/public/HomePage').then(module 
 const AuthPage = React.lazy(() => import('@/pages/auth/AuthPage').then(module => ({ default: module.AuthPage })));
 const CatalogPage = React.lazy(() => import('@/pages/public/CatalogPage').then(module => ({ default: module.CatalogPage })));
 const ProductDetailPage = React.lazy(() => import('@/pages/public/ProductDetailPage').then(module => ({ default: module.ProductDetailPage })));
+const CheckoutPage = React.lazy(() => import('@/pages/public/CheckoutPage').then(module => ({ default: module.CheckoutPage })));
+const AccountDashboardPage = React.lazy(() => import('@/pages/account/AccountDashboardPage').then(module => ({ default: module.AccountDashboardPage })));
+
+import { ProtectedRoute } from '../layouts/ProtectedRoute';
 
 export function PublicRoutes() {
   return (
     <Routes>
       <Route element={<PublicLayout />}>
         <Route path="/" element={<HomePage />} />
-        <Route path="/auth" element={<AuthPage />} />
+        <Route path="/login" element={<AuthPage mode="login" />} />
+        <Route path="/register" element={<AuthPage mode="register" />} />
+        <Route path="/partner" element={<AuthPage mode="partner" />} />
+        <Route path="/auth" element={<AuthPage mode="login" />} />
         <Route path="/catalog" element={<CatalogPage />} />
         <Route path="/products/:id" element={<ProductDetailPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/account" element={<ProtectedRoute><AccountDashboardPage /></ProtectedRoute>} />
+        <Route path="/dashboard" element={<ProtectedRoute><AccountDashboardPage /></ProtectedRoute>} />
       </Route>
     </Routes>
   );

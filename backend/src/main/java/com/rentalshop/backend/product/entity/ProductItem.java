@@ -25,9 +25,22 @@ public class ProductItem {
     @Column(name = "sku_code", nullable = false, unique = true)
     private String skuCode;
 
+    @Column(name = "serial_number")
+    private String serialNumber;
+
+    @Column(name = "barcode")
+    private String barcode;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ItemStatus status;
+
+    @Column(name = "condition_score")
+    @Builder.Default
+    private Integer conditionScore = 100;
+
+    @Column(name = "warehouse_location")
+    private String warehouseLocation;
 
     private String notes;
 }

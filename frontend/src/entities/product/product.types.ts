@@ -1,4 +1,4 @@
-import { type ItemStatus } from '@/entities/user/user.types';
+import { type ItemStatus, type MerchantTier } from '@/entities/user/user.types';
 
 export type EAVValueType = 'string' | 'number' | 'boolean' | 'options';
 
@@ -30,6 +30,7 @@ export interface MerchantInfo {
   avatar?: string;
   rating: number;
   totalReviews: number;
+  tier?: MerchantTier;
 }
 
 export interface Product {
@@ -44,13 +45,19 @@ export interface Product {
   depositAmount: number;
   
   images: string[]; // At least 1 main + thumbnails
+  imageUrl?: string;
   status: ItemStatus;
   
   eavValues: EAVValue[];
+  attributes?: Record<string, any>;
   
   district: string;
   city: string;
   
   createdAt: string;
   featured?: boolean;
+  rating?: number;
+  totalRentals?: number;
+  totalStock?: number;
 }
+

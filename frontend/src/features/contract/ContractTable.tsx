@@ -1,4 +1,4 @@
-import { CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
+import { CheckCircle, XCircle, AlertTriangle, ShieldCheck } from 'lucide-react';
 import { VirtualTable } from '@/shared/ui/VirtualTable';
 import { Button } from '@/shared/ui/button';
 import { formatCurrency } from '@/shared/lib/utils';
@@ -8,9 +8,11 @@ import { toast } from 'sonner';
 interface ContractTableProps {
   contracts: Contract[];
   onReportDamage: (contract: Contract) => void;
+  onApprove?: (contract: Contract) => void;
+  onReject?: (contract: Contract) => void;
 }
 
-export function ContractTable({ contracts, onReportDamage }: ContractTableProps) {
+export function ContractTable({ contracts, onReportDamage, onApprove, onReject }: ContractTableProps) {
   
   const handleAction = (id: string, actionName: string) => {
     toast.success(`Thực hiện: ${actionName} cho đơn ${id}`);
@@ -23,8 +25,13 @@ export function ContractTable({ contracts, onReportDamage }: ContractTableProps)
       width: '25%',
       cell: (item: Contract) => (
         <div className="flex flex-col">
-          <span className="font-semibold text-gray-900 text-xs">{item.contractCode}</span>
+          <span className="font-semibold text-gray-900 text-xs font-mono">{item.contractCode}</span>
           <span className="text-sm font-medium text-gray-700 line-clamp-1">{item.product.name}</span>
+          {item.escrowStatus && (
+            <span className="text-[10px] text-indigo-600 flex items-center gap-0.5 mt-0.5">
+              <ShieldCheck className="h-3 w-3" /> Escrow: {item.escrowStatus}
+            </span>
+          )}
         </div>
       ),
     },
@@ -40,7 +47,7 @@ export function ContractTable({ contracts, onReportDamage }: ContractTableProps)
       ),
     },
     {
-      header: 'Thời gian',
+      header: 'Thời gian thuê',
       accessorKey: 'startDate' as keyof Contract,
       width: '20%',
       cell: (item: Contract) => (
@@ -69,11 +76,20 @@ export function ContractTable({ contracts, onReportDamage }: ContractTableProps)
         // Actions by Status
         if (item.status === 'PENDING') {
           return (
-            <div className="flex flex-col gap-2">
-              <Button size="sm" className="h-7 text-xs bg-green-600 hover:bg-green-700 px-2" onClick={() => handleAction(item.contractCode, 'Xác nhận chuẩn bị hàng')}>
+            <div className="flex flex-col gap-1.5">
+              <Button
+                size="sm"
+                className="h-7 text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2"
+                onClick={() => onApprove ? onApprove(item) : handleAction(item.contractCode, 'Xác nhận chuẩn bị hàng')}
+              >
                 <CheckCircle className="h-3 w-3 mr-1" /> Xác nhận
               </Button>
-              <Button size="sm" variant="outline" className="h-7 text-xs text-red-600 hover:bg-red-50 hover:text-red-700 px-2 border-red-200" onClick={() => handleAction(item.contractCode, 'Từ chối')}>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-7 text-xs text-red-600 hover:bg-red-50 hover:text-red-700 px-2 border-red-200"
+                onClick={() => onReject ? onReject(item) : handleAction(item.contractCode, 'Từ chối')}
+              >
                 <XCircle className="h-3 w-3 mr-1" /> Từ chối
               </Button>
             </div>
@@ -82,14 +98,32 @@ export function ContractTable({ contracts, onReportDamage }: ContractTableProps)
         
         if (item.status === 'RETURNED') {
           return (
-            <div className="flex flex-col gap-2">
-              <Button size="sm" variant="outline" className="h-7 text-xs text-green-700 border-green-300 hover:bg-green-50 px-2" onClick={() => handleAction(item.contractCode, 'Xác nhận hàng nguyên vẹn')}>
+            <div className="flex flex-col gap-1.5">
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-7 text-xs text-green-700 border-green-300 hover:bg-green-50 px-2 font-medium"
+                onClick={() => handleAction(item.contractCode, 'Xác nhận hàng nguyên vẹn')}
+              >
                 <CheckCircle className="h-3 w-3 mr-1" /> Hàng nguyên vẹn
               </Button>
-              <Button size="sm" variant="outline" className="h-7 text-xs text-amber-700 border-amber-300 hover:bg-amber-50 px-2" onClick={() => onReportDamage(item)}>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-7 text-xs text-amber-700 border-amber-300 hover:bg-amber-50 px-2 font-medium"
+                onClick={() => onReportDamage(item)}
+              >
                 <AlertTriangle className="h-3 w-3 mr-1" /> Báo cáo hư hỏng
               </Button>
             </div>
+          );
+        }
+
+        if (item.status === 'RENTING') {
+          return (
+            <span className="text-xs text-blue-600 font-semibold flex items-center gap-1">
+              Khách đang giữ máy
+            </span>
           );
         }
 

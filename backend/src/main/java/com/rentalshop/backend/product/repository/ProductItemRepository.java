@@ -29,4 +29,17 @@ public interface ProductItemRepository extends JpaRepository<ProductItem, Long> 
 
     @Query(value = "SELECT status, COUNT(*) FROM product_items GROUP BY status", nativeQuery = true)
     List<Object[]> countItemsByStatus();
+
+    @Query("SELECT p FROM ProductItem p WHERE (:merchantId IS NULL OR p.product.merchant.id = :merchantId) ORDER BY p.id DESC")
+    List<ProductItem> findByMerchantId(@Param("merchantId") Long merchantId);
+
+    @Query("SELECT COUNT(p) FROM ProductItem p WHERE (:merchantId IS NULL OR p.product.merchant.id = :merchantId)")
+    Long countByMerchantId(@Param("merchantId") Long merchantId);
+
+    @Query("SELECT COUNT(p) FROM ProductItem p WHERE (:merchantId IS NULL OR p.product.merchant.id = :merchantId) AND p.status = :status")
+    Long countByMerchantIdAndStatus(@Param("merchantId") Long merchantId, @Param("status") com.rentalshop.backend.product.enums.ItemStatus status);
+
+    boolean existsBySerialNumber(String serialNumber);
+
+    boolean existsByBarcode(String barcode);
 }

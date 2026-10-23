@@ -57,7 +57,7 @@ export function PasswordStrengthBar({ password, className }: PasswordStrengthBar
             key={i}
             className={cn(
               'h-1.5 flex-1 rounded-full transition-all duration-300',
-              i < strength.score ? strength.bgColor : 'bg-gray-200'
+              i < strength.score ? strength.bgColor : 'bg-slate-200'
             )}
           />
         ))}

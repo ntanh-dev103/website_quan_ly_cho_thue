@@ -60,6 +60,13 @@ public class SecurityConfig {
                         ).permitAll()
                         // Auth endpoints
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/categories/**", "/api/categories").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/products/**", "/api/products").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/rental/calculate", "/api/rental/**").permitAll()
+                        .requestMatchers("/api/contracts/**").permitAll()
+                        .requestMatchers("/api/inventory/**").permitAll()
+                        .requestMatchers("/api/merchant/**").permitAll()
+                        .requestMatchers("/api/admin/**").permitAll()
                         // Require authentication for everything else
                         .anyRequest().authenticated()
                 );

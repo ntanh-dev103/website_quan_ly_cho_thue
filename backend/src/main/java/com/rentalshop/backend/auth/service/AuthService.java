@@ -11,7 +11,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
+import com.rentalshop.backend.auth.dto.request.RegisterRequest;
+
 public interface AuthService {
     LoginResponse login(LoginRequest request);
+    LoginResponse register(RegisterRequest request);
     LoginResponse refresh(RefreshRequest request);
 }

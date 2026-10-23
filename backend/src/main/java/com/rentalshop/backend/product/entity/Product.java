@@ -1,5 +1,6 @@
 package com.rentalshop.backend.product.entity;
 
+import com.rentalshop.backend.auth.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,6 +24,38 @@ public class Product {
     private String name;
 
     private String description;
+
+    @Column(name = "thumbnail", length = 1000)
+    private String thumbnail;
+
+    @Column(name = "images", columnDefinition = "nvarchar(max)")
+    private String images;
+
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "district")
+    private String district;
+
+    @Column(name = "featured")
+    @Builder.Default
+    private Boolean featured = false;
+
+    @Column(name = "rating")
+    @Builder.Default
+    private Double rating = 5.0;
+
+    @Column(name = "total_reviews")
+    @Builder.Default
+    private Integer totalReviews = 0;
+
+    @Column(name = "total_rentals")
+    @Builder.Default
+    private Integer totalRentals = 0;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "merchant_id")
+    private User merchant;
 
     @Column(name = "rent_price", nullable = false)
     private Double rentPrice;
