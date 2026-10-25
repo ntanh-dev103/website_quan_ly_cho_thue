@@ -21,11 +21,11 @@ public class ProductItemStateServiceImpl implements ProductItemStateService {
     private final ProductItemRepository productItemRepository;
 
     private static final Map<ItemStatus, List<ItemStatus>> ALLOWED_TRANSITIONS = Map.of(
-            ItemStatus.AVAILABLE, List.of(ItemStatus.RESERVED, ItemStatus.MAINTENANCE, ItemStatus.RETIRED),
-            ItemStatus.RESERVED, List.of(ItemStatus.RENTED, ItemStatus.AVAILABLE),
+            ItemStatus.AVAILABLE, List.of(ItemStatus.RESERVED, ItemStatus.RENTED, ItemStatus.MAINTENANCE, ItemStatus.RETIRED),
+            ItemStatus.RESERVED, List.of(ItemStatus.RENTED, ItemStatus.AVAILABLE, ItemStatus.MAINTENANCE),
             ItemStatus.RENTED, List.of(ItemStatus.AVAILABLE, ItemStatus.DAMAGED, ItemStatus.MAINTENANCE),
             ItemStatus.MAINTENANCE, List.of(ItemStatus.AVAILABLE, ItemStatus.DAMAGED, ItemStatus.RETIRED),
-            ItemStatus.DAMAGED, List.of(ItemStatus.MAINTENANCE, ItemStatus.RETIRED),
+            ItemStatus.DAMAGED, List.of(ItemStatus.MAINTENANCE, ItemStatus.AVAILABLE, ItemStatus.RETIRED),
             ItemStatus.RETIRED, List.of() // Cannot transition out of RETIRED
     );
 

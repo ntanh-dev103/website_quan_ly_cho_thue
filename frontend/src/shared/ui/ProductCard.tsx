@@ -16,12 +16,13 @@ interface ProductCardProps {
 export function ProductCard({ product, fixedWidth = false }: ProductCardProps) {
   const imgSrc = product.images?.[0] || '';
   const [imgError, setImgError] = useState(!product.images?.[0]);
-  const { addItem } = useGhostCartStore();
+  const { addItem, setIsOpen } = useGhostCartStore();
 
   const handleQuickRent = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     addItem(product, 1);
+    setIsOpen(true);
   };
 
   const isM3 = product.merchant.tier === 'M3' || product.merchant.tier === 'M4';

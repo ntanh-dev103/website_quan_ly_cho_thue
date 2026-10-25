@@ -10,7 +10,9 @@ import {
   ChevronRight, 
   ChevronDown, 
   ShieldCheck, 
-  Compass 
+  Compass,
+  ShieldAlert,
+  Store
 } from 'lucide-react';
 import { Button } from '@/shared/ui/button';
 import { TierBadge } from '@/shared/ui/TierBadge';
@@ -158,23 +160,40 @@ export function Navbar() {
 
               {/* User Avatar Circle OR Đăng nhập Ghost Button */}
               {isAuthenticated && user ? (
-                <div className="flex items-center gap-2 pl-1">
-                  <div 
+                <div className="flex items-center gap-1.5 sm:gap-2 pl-1">
+                  {/* Admin Portal Button */}
+                  {role === 'ADMIN' && (
+                    <Link to="/admin">
+                      <Button size="sm" className="hidden sm:inline-flex bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow-sm gap-1.5 h-8">
+                        <ShieldAlert className="w-3.5 h-3.5" />
+                        <span>Quản Trị</span>
+                      </Button>
+                    </Link>
+                  )}
+
+                  {/* Merchant Portal Button */}
+                  {(role === 'MERCHANT' || user.roles?.includes('MERCHANT')) && (
+                    <Link to="/merchant">
+                      <Button size="sm" variant="outline" className="hidden sm:inline-flex border-purple-300 bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-bold px-2.5 py-1 rounded-lg gap-1.5 h-8">
+                        <Store className="w-3.5 h-3.5" />
+                        <span>Kênh Đối Tác</span>
+                      </Button>
+                    </Link>
+                  )}
+
+                  <button
+                    type="button"
                     onClick={() => navigate('/account')}
-                    className="flex items-center gap-2 cursor-pointer p-1 rounded-full hover:bg-gray-100 transition-colors"
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-100 text-primary-700 font-bold text-xs ring-2 ring-primary-500/20 hover:ring-primary-500/50 hover:scale-105 transition-all cursor-pointer overflow-hidden shrink-0 shadow-2xs"
                     title={`Trung tâm điều khiển: ${user.name}`}
+                    aria-label={`Tài khoản: ${user.name}`}
                   >
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-primary-700 font-bold text-xs ring-2 ring-primary-500/20">
-                      {user.avatar ? (
-                        <img src={user.avatar} alt={user.name} className="h-8 w-8 rounded-full object-cover" />
-                      ) : (
-                        user.name?.charAt(0) || 'U'
-                      )}
-                    </div>
-                    <span className="text-xs font-semibold text-gray-700 hidden xl:block max-w-[100px] truncate">
-                      {user.name}
-                    </span>
-                  </div>
+                    {user.avatar ? (
+                      <img src={user.avatar} alt={user.name} className="h-full w-full object-cover" />
+                    ) : (
+                      user.name?.charAt(0) || 'U'
+                    )}
+                  </button>
 
                   <Button
                     variant="ghost"
@@ -291,6 +310,32 @@ export function Navbar() {
                 </div>
                 <ChevronRight className="h-4 w-4 text-gray-400" />
               </Link>
+              {(role === 'MERCHANT' || user?.roles?.includes('MERCHANT')) && (
+                <Link
+                  to="/merchant"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between p-3 rounded-xl bg-purple-50 hover:bg-purple-100 font-bold text-purple-700"
+                >
+                  <div className="flex items-center gap-2">
+                    <Store className="h-4 w-4 text-purple-600" />
+                    <span>Kênh Đối tác (Merchant Portal)</span>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-purple-400" />
+                </Link>
+              )}
+              {role === 'ADMIN' && (
+                <Link
+                  to="/admin"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between p-3 rounded-xl bg-red-50 hover:bg-red-100 font-bold text-red-700"
+                >
+                  <div className="flex items-center gap-2">
+                    <ShieldAlert className="h-4 w-4 text-red-600" />
+                    <span>Quản trị Hệ thống (Admin Portal)</span>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-red-400" />
+                </Link>
+              )}
             </div>
 
             {/* Mobile 2-Level Category Accordion */}
@@ -352,8 +397,12 @@ export function Navbar() {
                     }}
                     className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors"
                   >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary-600 font-bold">
-                      {user.name?.charAt(0) || 'U'}
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary-600 font-bold overflow-hidden shrink-0">
+                      {user.avatar ? (
+                        <img src={user.avatar} alt={user.name} className="h-full w-full object-cover" />
+                      ) : (
+                        user.name?.charAt(0) || 'U'
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <span className="text-sm font-bold text-gray-900 block truncate">{user.name}</span>

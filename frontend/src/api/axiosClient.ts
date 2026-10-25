@@ -7,8 +7,10 @@ export interface ApiResponse<T = any> {
   data: T;
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+
 const axiosClient = axios.create({
-  baseURL: '/api',
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -64,7 +66,8 @@ axiosClient.interceptors.response.use(
           if (refreshToken && !originalRequest._retry) {
             originalRequest._retry = true;
             try {
-              const res = await axios.post<ApiResponse<{ accessToken: string }>>('/api/auth/refresh', {
+              const refreshEndpoint = API_BASE_URL.replace(/\/$/, '') + '/auth/refresh';
+              const res = await axios.post<ApiResponse<{ accessToken: string }>>(refreshEndpoint, {
                 refreshToken,
               });
               const newAccessToken = res.data.data.accessToken;

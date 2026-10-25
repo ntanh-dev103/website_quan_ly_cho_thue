@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Modal } from '@/shared/ui/Modal';
 import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
@@ -15,14 +15,24 @@ interface ItemStatusModalProps {
 }
 
 export function ItemStatusModal({ isOpen, onClose, item, onItemUpdated }: ItemStatusModalProps) {
+  const [status, setStatus] = useState<'AVAILABLE' | 'RENTED' | 'MAINTENANCE' | 'DAMAGED' | 'RETIRED'>('AVAILABLE');
+  const [conditionScore, setConditionScore] = useState<number>(100);
+  const [warehouseLocation, setWarehouseLocation] = useState('');
+  const [notes, setNotes] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (item) {
+      setStatus(item.status);
+      setConditionScore(item.conditionScore || 100);
+      setWarehouseLocation(item.warehouseLocation || '');
+      setNotes(item.notes || '');
+    }
+  }, [item]);
+
   if (!item) return null;
 
   const isRented = item.status === 'RENTED';
-  const [status, setStatus] = useState<'AVAILABLE' | 'RENTED' | 'MAINTENANCE' | 'DAMAGED' | 'RETIRED'>(item.status);
-  const [conditionScore, setConditionScore] = useState<number>(item.conditionScore || 100);
-  const [warehouseLocation, setWarehouseLocation] = useState(item.warehouseLocation || '');
-  const [notes, setNotes] = useState(item.notes || '');
-  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

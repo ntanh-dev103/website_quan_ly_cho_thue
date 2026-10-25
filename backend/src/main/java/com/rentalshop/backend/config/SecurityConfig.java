@@ -64,9 +64,9 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/products/**", "/api/products").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/rental/calculate", "/api/rental/**").permitAll()
                         .requestMatchers("/api/contracts/**").permitAll()
-                        .requestMatchers("/api/inventory/**").permitAll()
-                        .requestMatchers("/api/merchant/**").permitAll()
-                        .requestMatchers("/api/admin/**").permitAll()
+                        .requestMatchers("/api/inventory/**").hasAnyRole("MERCHANT", "ADMIN")
+                        .requestMatchers("/api/merchant/**").hasAnyRole("MERCHANT", "ADMIN")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         // Require authentication for everything else
                         .anyRequest().authenticated()
                 );
@@ -77,12 +77,20 @@ public class SecurityConfig {
         return http.build();
     }
 
+    @org.springframework.beans.factory.annotation.Value("${app.cors.allowed-origins:http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:3000}")
+    private String allowedOrigins;
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:3000"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
+        java.util.List<String> origins = java.util.Arrays.stream(allowedOrigins.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .toList();
+        configuration.setAllowedOrigins(origins);
+        configuration.setAllowedOriginPatterns(java.util.List.of("http://localhost:*", "http://127.0.0.1:*", "https://*"));
+        configuration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        configuration.setAllowedHeaders(java.util.List.of("*"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
         return new UrlBasedCorsConfigurationSource() {{

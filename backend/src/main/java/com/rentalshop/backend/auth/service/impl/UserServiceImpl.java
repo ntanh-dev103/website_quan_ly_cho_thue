@@ -28,12 +28,14 @@ public class UserServiceImpl implements UserService {
     public void initDefaultAdmin() {
         seedUserIfNotExists("admin@demo.com", "Admin Hệ Thống", Role.ADMIN, "C4", "M4", "123456", "0901000001", null, null);
         seedUserIfNotExists("merchant@demo.com", "AutoRent Pro HCM", Role.MERCHANT, "C1", "M2", "123456", "0902000002", "Công ty TNHH AutoRent Pro", "0309999001");
+        seedUserIfNotExists("merchant1@demo.com", "Startup Rental Shop", Role.MERCHANT, "C1", "M1", "123456", "0902000001", "Cửa hàng Thiết Bị Khởi Nghiệp M1", "0309999000");
         seedUserIfNotExists("merchant3@demo.com", "Cinematic Gear Studio", Role.MERCHANT, "C1", "M3", "123456", "0902000003", "Cinematic Gear Studio VN", "0309999002");
         seedUserIfNotExists("merchant4@demo.com", "Luxury Event Group", Role.MERCHANT, "C1", "M4", "123456", "0902000004", "Tập đoàn Sự kiện Hoàng Gia", "0309999003");
         seedUserIfNotExists("vip@demo.com", "Nguyễn Hoàng VIP", Role.CUSTOMER, "C4", "M1", "123456", "0903000001", null, null);
         seedUserIfNotExists("gold@demo.com", "Trần Kim Vàng", Role.CUSTOMER, "C3", "M1", "123456", "0903000002", null, null);
         seedUserIfNotExists("silver@demo.com", "Lê Thanh Bạc", Role.CUSTOMER, "C2", "M1", "123456", "0903000003", null, null);
         seedUserIfNotExists("customer@demo.com", "Phạm Văn Thuê", Role.CUSTOMER, "C1", "M1", "123456", "0903000004", null, null);
+        seedUserIfNotExists("dual@demo.com", "Hội Viên Tuần Hoàn Kép", Role.CUSTOMER, "C3", "M2", "123456", "0903000005", "Cửa Hàng Tuần Hoàn Kép", "0309999005");
 
         // Also seed @test.com accounts for frontend demo pills compatibility
         seedUserIfNotExists("admin@test.com", "Admin Quản Trị", Role.ADMIN, "C4", "M4", "123456", "0901000099", null, null);

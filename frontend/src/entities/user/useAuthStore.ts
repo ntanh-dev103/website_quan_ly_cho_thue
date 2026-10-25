@@ -114,12 +114,13 @@ export const useAuthStore = create<AuthStore>()(
       isLoading: false,
 
       // Login
-      login: async (email: string, password = 'password') => {
+      login: async (email: string, password = '123456') => {
         set({ isLoading: true });
+        const effectivePassword = password === 'password' ? '123456' : password;
         
         try {
           // 1. Thử gọi API Backend thực tế
-          const res = await authApi.login({ email, password });
+          const res = await authApi.login({ email, password: effectivePassword });
           if (res?.accessToken) {
             localStorage.setItem('accessToken', res.accessToken);
             if (res.refreshToken) {

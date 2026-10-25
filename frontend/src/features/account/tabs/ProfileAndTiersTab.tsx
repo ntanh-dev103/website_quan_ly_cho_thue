@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   UserCog, 
   Lock, 
@@ -25,15 +25,25 @@ export function ProfileAndTiersTab() {
   } = useAuthStore();
 
   // Profile Form state
-  const [name, setName] = useState(user?.name || 'Nguyễn Quốc Duy');
-  const [email, setEmail] = useState(user?.email || 'duy.nguyen@renthub.vn');
-  const [phone, setPhone] = useState(user?.phone || '0912 345 678');
-  const [address, setAddress] = useState(
-    user?.address || 'Số 45, Đường Lê Duẩn, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh'
-  );
-  const [companyName, setCompanyName] = useState(user?.companyName || 'DuyTech Media & Rental');
-  const [taxCode, setTaxCode] = useState(user?.taxCode || '0318921832');
+  const [name, setName] = useState(user?.name || '');
+  const [email, setEmail] = useState(user?.email || '');
+  const [phone, setPhone] = useState(user?.phone || '');
+  const [address, setAddress] = useState(user?.address || '');
+  const [companyName, setCompanyName] = useState(user?.companyName || '');
+  const [taxCode, setTaxCode] = useState(user?.taxCode || '');
   const [isSaving, setIsSaving] = useState(false);
+
+  // Synchronize form when active user or persona switches
+  useEffect(() => {
+    if (user) {
+      setName(user.name || '');
+      setEmail(user.email || '');
+      setPhone(user.phone || '');
+      setAddress(user.address || '');
+      setCompanyName(user.companyName || '');
+      setTaxCode(user.taxCode || '');
+    }
+  }, [user]);
 
   // Stepper track view
   const [stepperView, setStepperView] = useState<'CUSTOMER' | 'MERCHANT'>('CUSTOMER');

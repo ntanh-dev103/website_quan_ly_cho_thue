@@ -59,7 +59,7 @@ export const contractApi = {
   createContract: async (req: CreateContractReq): Promise<ContractResponseDto> => {
     try {
       const res = await axiosClient.post('/contracts', req);
-      return res.data.data;
+      return res.data?.data ?? res.data;
     } catch {
       // Fallback for resilient local demo
       const id = Date.now();
@@ -87,7 +87,7 @@ export const contractApi = {
   depositContract: async (id: number | string): Promise<ContractResponseDto> => {
     try {
       const res = await axiosClient.put(`/contracts/${id}/deposit`);
-      return res.data.data;
+      return res.data?.data ?? res.data;
     } catch {
       return {
         id,
@@ -108,13 +108,13 @@ export const contractApi = {
 
   handoverContract: async (id: number | string): Promise<ContractResponseDto> => {
     const res = await axiosClient.put(`/contracts/${id}/handover`);
-    return res.data.data;
+    return res.data?.data ?? res.data;
   },
 
   returnItems: async (id: number | string, req: { actualReturnDate?: string }): Promise<ContractResponseDto> => {
     try {
       const res = await axiosClient.post(`/contracts/${id}/return-items`, req);
-      return res.data.data;
+      return res.data?.data ?? res.data;
     } catch {
       return {
         id,
@@ -136,7 +136,7 @@ export const contractApi = {
   assessDamage: async (id: number | string, req: DamageAssessmentReq): Promise<ContractResponseDto> => {
     try {
       const res = await axiosClient.post(`/contracts/${id}/damage-assessment`, req);
-      return res.data.data;
+      return res.data?.data ?? res.data;
     } catch {
       return {
         id,
@@ -159,16 +159,16 @@ export const contractApi = {
 
   getContracts: async (params?: { customerId?: number; status?: string; page?: number; size?: number }) => {
     const res = await axiosClient.get('/contracts', { params });
-    return res.data.data;
+    return res.data?.data ?? res.data;
   },
 
   getContractById: async (id: number | string): Promise<ContractResponseDto> => {
     const res = await axiosClient.get(`/contracts/${id}`);
-    return res.data.data;
+    return res.data?.data ?? res.data;
   },
 
   cancelContract: async (id: number | string): Promise<ContractResponseDto> => {
     const res = await axiosClient.put(`/contracts/${id}/cancel`);
-    return res.data.data;
+    return res.data?.data ?? res.data;
   },
 };
